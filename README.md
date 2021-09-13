@@ -1,5 +1,3 @@
 # RadiationTherapyApplication
 
 test
-test
-test
