@@ -62,3 +62,29 @@ def MU_data():  # MU_data
         MU = df.FractionGroupSequence[0].ReferencedBeamSequence[bi].BeamMeterset
         mu_data.append(MU)
     return mu_data
+
+
+def Weight_data():  # Weight_data
+    weight_data = []
+    for bi in range(beam_number):
+        for cj in range(df.BeamSequence[bi].NumberOfControlPoints):
+            weight = df.BeamSequence[bi].ControlPointSequence[cj].CumulativeMetersetWeight
+            weight_data.append(weight)
+    return weight_data
+
+
+def MU_cp(mu, weight):  # MU/CP
+    mu_cp = []
+    for bi in range(beam_number):
+        for cj in range(df.BeamSequence[bi].NumberOfControlPoints):
+            mu_cp.append(mu[bi]*weight[bi][cj])
+    return mu_cp
+
+
+def CP_weight_normalize(no_normalization_mu_cp):
+    mu_cp = []
+    for bi in range(beam_number):
+        for cj in range(int(df.BeamSequence[bi].NumberOfControlPoints)-1):
+            mu_cp.append(
+                no_normalization_mu_cp[bi][cj+1] - no_normalization_mu_cp[bi][cj])
+    return mu_cp
