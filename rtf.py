@@ -81,10 +81,55 @@ def MU_cp(mu, weight):  # MU/CP
     return mu_cp
 
 
-def CP_weight_normalize(no_normalization_mu_cp):
-    mu_cp = []
+def list_sub(sub_list):
+    sublist = []
     for bi in range(beam_number):
         for cj in range(int(df.BeamSequence[bi].NumberOfControlPoints)-1):
-            mu_cp.append(
-                no_normalization_mu_cp[bi][cj+1] - no_normalization_mu_cp[bi][cj])
-    return mu_cp
+            sublist.append(sub_list[bi][cj+1] - sub_list[bi][cj])
+    return sublist
+
+
+def list_sub_JTCS(sub_list):
+    sublist_x1 = []
+    sublist_x2 = []
+    for bi in range(beam_number):
+        for cj in range(int(df.BeamSequence[bi].NumberOfControlPoints)-1):
+            sublist_x1.append(abs(sub_list[bi][cj+1][0] - sub_list[bi][cj][0]))
+            sublist_x2.append(abs(sub_list[bi][cj+1][1] - sub_list[bi][cj][1]))
+    return sublist_x1, sublist_x2
+
+
+def beamnumber_split_JTCS(tosplitdata):  # dataをbeamnumberごとに分割
+    separate = []
+    newArray = []
+    cp_list_JTCS = []
+    for i in range(beam_number):
+        cp_list_JTCS.append(int(cp_list[i])-1)
+    for i in range(beam_number):
+        if i == 0:
+            separate.append(int(cp_list_JTCS[i]))
+            cp = int(cp_list_JTCS[i])
+        else:
+            separate.append(cp+int(cp_list_JTCS[i]))
+            cp = cp+int(cp_list_JTCS[i])
+    for i in range(2):
+        start = 0
+        for sp in separate:
+            newArray.append(tosplitdata[i][start:sp])
+            start = sp
+    return newArray
+
+
+def ARC_sum(sum_data):
+    Sum_data = []
+    for i in range(len(sum_data)):
+        Sum_data.append(sum(sum_data[i]))
+    return Sum_data
+
+
+def ARC_JTCS(arc_data):
+    Arc_data = []
+    for i in range(beam_number):
+        Arc_data.append((arc_data[i] + arc_data[i+2]) /
+                        (int(df.BeamSequence[i].NumberOfControlPoints)-1))
+    return Arc_data

@@ -1,3 +1,3 @@
 # RadiationTherapyApplication
 
-test
+pydicom ver : 1.4.2
