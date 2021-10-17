@@ -17,7 +17,7 @@ for i in range(beam_number):
 cp_sum = sum(cp_list)
 
 # 取得データ
-# jawデータ & mlcデータ & CPごとのweight & MU/CP
+# jawデータ & mlcデータ & MU & CPごとのweight & MU/CP
 xjaw = rtf.beamnumber_split(rtf.xjaw_position())
 yjaw = rtf.beamnumber_split(rtf.yjaw_position())
 mlc = rtf.beamnumber_split(rtf.MLC_position())
