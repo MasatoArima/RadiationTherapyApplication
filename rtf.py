@@ -29,6 +29,40 @@ def beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
     return newArray
 
 
+def cp_beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
+    separate = []
+    start = 0
+    newArray = []
+    for i in range(beam_number):
+        if i == 0:
+            separate.append(int(cp_list[i])-1)
+            cp = int(cp_list[i])-1
+        else:
+            separate.append(cp+int(cp_list[i])-1)
+            cp = cp+int(cp_list[i])-1
+    for sp in separate:
+        newArray.append(tosplitdata[start:sp])
+        start = sp
+    return newArray
+
+
+def mlc_beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
+    separate = []
+    start = 0
+    newArray = []
+    for i in range(beam_number):
+        if i == 0:
+            separate.append(60)
+            mlc = 60
+        else:
+            separate.append(int(mlc)+60)
+            mlc = int(mlc) + 60
+    for sp in separate:
+        newArray.append(tosplitdata[start:sp])
+        start = sp
+    return newArray
+
+
 def xjaw_position():  # xJawのposition算出
     x_position = []
     for bi in range(beam_number):
@@ -86,6 +120,7 @@ def list_sub(sub_list):
     for bi in range(beam_number):
         for cj in range(int(df.BeamSequence[bi].NumberOfControlPoints)-1):
             sublist.append(sub_list[bi][cj+1] - sub_list[bi][cj])
+        sublist.append(0)
     return sublist
 
 
