@@ -460,15 +460,10 @@ AAV = []
 for ci in range(cp_sum):
     AAV.append(sum_AAV[ci]/(aav_sum_all[ci]))
 
-cp_w = []
-for i in range(beam_number):
-    for j in range(int(df.BeamSequence[i].NumberOfControlPoints)-1):
-        cp_w.append((mu_cp[i][j]+mu_cp[i][j+1])/mu[i])
-
 AAV = rtf.beamnumber_split(AAV)
 LSV_CP = rtf.beamnumber_split(LSV_CP)
-cp_w = rtf.cp_beamnumber_split(cp_w)
 
+cp_w = []
 AAV_F = []
 LSV_F = []
 
@@ -476,9 +471,11 @@ for bi in range(beam_number):
     for cj in range(int(df.BeamSequence[i].NumberOfControlPoints)-1):
         AAV_F.append((AAV[bi][cj]+AAV[bi][cj+1])/2)
         LSV_F.append((LSV_CP[bi][cj]+LSV_CP[bi][cj+1])/2)
+        cp_w.append((mu_cp[bi][cj]+mu_cp[bi][cj+1])/mu[bi])
 
 AAV_F = rtf.cp_beamnumber_split(AAV_F)
 LSV_F = rtf.cp_beamnumber_split(LSV_F)
+cp_w = rtf.cp_beamnumber_split(cp_w)
 
 MCS_sum = []
 for i in range(beam_number):
