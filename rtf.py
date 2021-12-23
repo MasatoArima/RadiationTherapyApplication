@@ -12,7 +12,9 @@ for i in range(beam_number):
 cp_sum = sum(cp_list)
 
 
-def beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
+def beamnumber_split(tosplitdata):
+    '''dataをbeamnumber(Arc数)ごとに分割してListに保存'''
+
     separate = []
     start = 0
     newArray = []
@@ -29,7 +31,9 @@ def beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
     return newArray
 
 
-def cp_beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
+def cp_beamnumber_split(tosplitdata):
+    '''dataをbeamnumber(Arc数-1)ごとに分割してListに保存'''
+
     separate = []
     start = 0
     newArray = []
@@ -46,7 +50,9 @@ def cp_beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
     return newArray
 
 
-def mlc_beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
+def mlc_beamnumber_split(tosplitdata):
+    '''dataをMLCごとに分割してListに保存'''
+
     separate = []
     start = 0
     newArray = []
@@ -63,7 +69,9 @@ def mlc_beamnumber_split(tosplitdata):  # dataをbeamnumberごとに分割
     return newArray
 
 
-def xjaw_position():  # xJawのposition算出
+def xjaw_position():
+    '''Xjawのデータを算出'''
+
     x_position = []
     for bi in range(beam_number):
         for cj in range(df.BeamSequence[bi].NumberOfControlPoints):
@@ -72,7 +80,9 @@ def xjaw_position():  # xJawのposition算出
     return x_position
 
 
-def yjaw_position():  # yJawのposition算出
+def yjaw_position():
+    '''Yjawのデータを算出'''
+
     y_position = []
     for bi in range(beam_number):
         for cj in range(df.BeamSequence[bi].NumberOfControlPoints):
