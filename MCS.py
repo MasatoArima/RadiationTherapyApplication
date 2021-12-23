@@ -458,7 +458,7 @@ for i in range(beam_number):
 
 AAV = []
 for ci in range(cp_sum):
-    AAV.append(sum_AAV[ci]/(aav_sum_all[ci]))
+    AAV.append(sum_AAV[ci]/(aav_sum_alvl[ci]))
 
 AAV = rtf.beamnumber_split(AAV)
 LSV_CP = rtf.beamnumber_split(LSV_CP)
