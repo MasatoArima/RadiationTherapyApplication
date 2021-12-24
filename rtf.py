@@ -91,7 +91,9 @@ def yjaw_position():
     return y_position
 
 
-def MLC_position():  # MLC position
+def MLC_position():
+    '''MLCデータを算出'''
+
     mlc_position = []
     for bi in range(beam_number):
         for cj in range(df.BeamSequence[bi].NumberOfControlPoints):
@@ -100,7 +102,8 @@ def MLC_position():  # MLC position
     return mlc_position
 
 
-def MU_data():  # MU_data
+def MU_data():
+    '''MUデータを算出'''
     mu_data = []
     for bi in range(beam_number):
         MU = df.FractionGroupSequence[0].ReferencedBeamSequence[bi].BeamMeterset
@@ -108,7 +111,9 @@ def MU_data():  # MU_data
     return mu_data
 
 
-def Weight_data():  # Weight_data
+def Weight_data():
+    '''beam_Weightデータを算出'''
+
     weight_data = []
     for bi in range(beam_number):
         for cj in range(df.BeamSequence[bi].NumberOfControlPoints):
@@ -117,7 +122,8 @@ def Weight_data():  # Weight_data
     return weight_data
 
 
-def MU_cp(mu, weight):  # MU/CP
+def MU_cp(mu, weight):
+    '''co間のMUを算出'''
     mu_cp = []
     for bi in range(beam_number):
         for cj in range(df.BeamSequence[bi].NumberOfControlPoints):
