@@ -124,6 +124,7 @@ def Weight_data():
 
 def MU_cp(mu, weight):
     '''co間のMUを算出'''
+
     mu_cp = []
     for bi in range(beam_number):
         for cj in range(df.BeamSequence[bi].NumberOfControlPoints):
