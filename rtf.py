@@ -123,7 +123,7 @@ def Weight_data():
 
 
 def MU_cp(mu, weight):
-    '''co間のMUを算出'''
+    '''cp間のMUを算出'''
 
     mu_cp = []
     for bi in range(beam_number):
@@ -151,7 +151,9 @@ def list_sub_JTCS(sub_list):
     return sublist_x1, sublist_x2
 
 
-def beamnumber_split_JTCS(tosplitdata):  # dataをbeamnumberごとに分割
+def beamnumber_split_JTCS(tosplitdata):
+    '''dataをbeamnumber(Arc数)ごとに分割してListに保存'''
+
     separate = []
     newArray = []
     cp_list_JTCS = []
