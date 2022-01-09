@@ -175,6 +175,8 @@ def beamnumber_split_JTCS(tosplitdata):
 
 
 def ARC_sum(sum_data):
+    '''arcごとのデータの合計をリストに保存'''
+
     Sum_data = []
     for i in range(len(sum_data)):
         Sum_data.append(sum(sum_data[i]))
