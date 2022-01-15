@@ -8,43 +8,29 @@ df = pydicom.read_file("RTplan.dcm")
 
 # stracture読み込み必要
 
+
+# DICOM origin data をプランごとに入力
 origin = input('DICOMoriginを入力してください : ')
+# 作成したストラクチャをa["XXX"]の形で下記に入力。区切りはカンマ(,)で行う。
+b = [ a["Skin"], a["PTV_66"], a["SpinalCanal"] ]
 
-b = a["Skin"]
-b1 = a["PTV_66"]
-
-list_y = list(b.keys())
-list_y1 = list(b1.keys())
-tmp_a = []
-tmp_b = []
-tmp_c = []
-tmp_a1 = []
-tmp_b1 = []
-tmp_c1 = []
-    
-for r in list_y :
-    for i in range (len(b[r][0])):
-        tmp_a.append(b[r][0][i][0])
-        tmp_b.append(b[r][0][i][1])
-        tmp_c.append(origin + r)
-
-for r in list_y1 :
-    for i in range (len(b1[r][0])):
-        tmp_a1.append(b1[r][0][i][0])
-        tmp_b1.append(b1[r][0][i][1])
-        tmp_c1.append(origin + r)
-
+list_y = [[b[i].keys()] for i in range(len(b))]
+x = [ [ b[x][r][0][i][0] for r in list_y[x][0] for i in range (len(b[x][r][0]))] for x in range(len(b))]
+y = [ [ b[x][r][0][i][1] for r in list_y[x][0] for i in range (len(b[x][r][0]))] for x in range(len(b))]
+z = [ [ (origin + r) for r in list_y[x][0] for i in range (len(b[x][r][0]))] for x in range(len(b))]
 
 fig = plt.figure(figsize=(5, 5))
+fig2 = plt.figure(figsize=(5, 5))
 ax = fig.add_subplot(111, projection='3d')
-ax.plot(tmp_a,tmp_b,tmp_c)
-ax.plot(tmp_a1,tmp_b1,tmp_c1, color='blue')
+ax2 = fig2.add_subplot(111, projection='3d')
+
+color = ['red','blue','black']
+
+for i in range (len(b)):
+    ax.plot(x[i],y[i],z[i], color = color[i])
+    ax2.plot(x[i],y[i],z[i], color = color[i])
+
 ax.view_init(elev=0, azim=270)
-plt.show()
+ax2.view_init(elev=20, azim=200)
 
-fig = plt.figure(figsize=(5, 5))
-ax = fig.add_subplot(111, projection='3d')
-ax.plot(tmp_a,tmp_b,tmp_c)
-ax.plot(tmp_a1,tmp_b1,tmp_c1, color='blue')
-ax.view_init(elev=20, azim=200)
 plt.show()
