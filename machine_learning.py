@@ -46,33 +46,47 @@ warnings.filterwarnings('ignore')
 
 # file読み込み
 df = pd.read_csv("test.csv", encoding="utf-8")
-df.columns = ["A","B","C"]
 
 def level_judge(ex):
-    if  (-3.0 <= ex <= 3.0):
-        return "OK"
+    if  (-1.0 <= ex <= 1.0):
+        return "1"
+    if  (-2.0 <= ex <= 2.0):
+        return "2"
+    if  (-2.0 <= ex <= 2.0):
+        return "3"
     else:
         return "NG"
 
-df.loc[:, "B判定"] = df.loc[:,"B"].apply(level_judge)
-df.loc[:, "C判定"] = df.loc[:,"C"].apply(level_judge)
+df.loc[:,"判定"] = df.loc[:,"error"].apply(level_judge)
 df.to_excel('test.xlsx')
 
-# One-hotエンコーディング
-df_b_moved = pd.get_dummies(df.loc[:, "B判定"], prefix="judgeB")
-df_c_moved = pd.get_dummies(df.loc[:, "C判定"], prefix="judgeC")
 
-df_merged = pd.concat([df, df_b_moved, df_c_moved], axis=1)
+
+# One-hotエンコーディング
+df_b_moved = pd.get_dummies(df.loc[:, "判定"], prefix="judge")
+df_merged = pd.concat([df, df_b_moved], axis=1)
+
+# 各カラムのデータ型を確認
+df_merged.dtypes
+
+# object型のデータを削除
+df_merged_except_object = df_merged.select_dtypes(['int64','float64'])
+df_merged_except_object.isnull().sum()
+df_merged_except_object.isnull().any()
+# 欠損値を確認して、欠損値があった場合、fillna()メソッド等で補間や削除を行う
 
 print('基本統計量')
-print(df_merged.describe())
+print(df_merged_except_object.describe())
 print("---------------------------")
 print('相関係数')
-print(df_merged.corr())
+print(df_merged_except_object.corr())
 print("---------------------------")
 
+# jupter表示の際にヒートマップで表示
+df_merged_except_object.corr().style.background_gradient(axis=None)
+
 # 散布図行列
-_ = scatter_matrix(df_merged)
+_ = scatter_matrix(df_merged_except_objec)
 plt.show()
 
 # 相関係数算出のためのデータ指定
@@ -126,9 +140,9 @@ print("---------------------------")
 
 # deep learning
 
-# 直線回帰分析
-x = df[['B']].values
-y = df[['C']].values
+# 直線回帰分
+x = df[['calculatedose']].values
+y = df[['chamberdose']].values
 model_lr = LinearRegression()
 model_lr.fit(x, y)
 
