@@ -17,6 +17,12 @@ from pandas import DataFrame
 from sklearn import linear_model, datasets
 from pandas.plotting import scatter_matrix
 from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
 
 # 相関関係を算出するためのモジュール
 from scipy.stats import kendalltau
@@ -49,15 +55,11 @@ df = pd.read_csv("test.csv", encoding="utf-8")
 
 def level_judge(ex):
     if  (-1.0 <= ex <= 1.0):
-        return "1"
-    if  (-2.0 <= ex <= 2.0):
-        return "2"
-    if  (-2.0 <= ex <= 2.0):
-        return "3"
+        return 1
     else:
-        return "NG"
+        return 0
 
-df.loc[:,"判定"] = df.loc[:,"error"].apply(level_judge)
+df.loc[:,"error1or0"] = df.loc[:,"error"].apply(level_judge)
 df.to_excel('test.xlsx')
 
 
@@ -195,13 +197,267 @@ print("---------------------------")
 
 
 
+
+
+
+
 # 決定木
 # 学習データセットとテストデータに分割する
-X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=123)
-# 決定木をインスタンス化する (木の最大深さ=3)
-tree = DecisionTreeClassifier(max_depth=3)
+# 分類木を読み込み
+decision_tree = tree.DecisionTreeClassifier()
+# decision_tree = DecisionTreeRegressor()
+decision_tree = tree.DecisionTreeClassifier()
+decision_tree
+
 # 学習
-tree.fit(X_train, y_train)
+decision_tree = decision_tree.fit(X_train, y_train)
+decision_tree
+
+# 予測
+y_pred = decision_tree.predict(X_test)
+y_pred
+
+# 正解率
+print('正解率 : ' + str(accuracy_score(y_test, y_pred)))
+
+
+min_samples_split_list = [i for i in range(2,7)]
+print(min_samples_split_list)
+
+for min_samples_split in min_samples_split_list:
+    decision_tree = tree.DecisionTreeClassifier(min_samples_split=min_samples_split)
+    decision_tree.fit(X_train, y_train)
+    y_pred = decision_tree.predict(X_test)
+    print(min_samples_split,accuracy_score(y_test, y_pred))
+
+min_impurity_decrease_list = np.arange(0, 0.1, 0.02)
+print(min_impurity_decrease_list)
+
+for min_impurity_decrease in min_impurity_decrease_list:
+    decision_tree = tree.DecisionTreeClassifier(min_impurity_decrease=min_impurity_decrease)
+    decision_tree.fit(X_train, y_train)
+    y_pred = decision_tree.predict(X_test)
+    print(min_impurity_decrease,accuracy_score(y_test, y_pred))
+
+# 適合率
+from sklearn.metrics import precision_score
+print('適合率 : ' + str(precision_score(y_test, y_pred)))
+
+# 再現率
+from sklearn.metrics import recall_score
+print('再現率 : ' + str(recall_score(y_test, y_pred)))
+
+# F値
+from sklearn.metrics import f1_score
+print('F値 : ' + str(f1_score(y_test, y_pred)))
+
+# F値(最適なパラメータを探す。split_listの幅を狭めてよりよいものを)
+for min_samples_split in min_samples_split_list:
+    for min_impurity_decrease in min_impurity_decrease_list:
+        decision_tree = tree.DecisionTreeClassifier(min_samples_split=min_samples_split, min_impurity_decrease=min_impurity_decrease)
+        decision_tree.fit(X_train, y_train)
+        y_pred = decision_tree.predict(X_test)
+        print(min_samples_split,min_impurity_decrease,f1_score(y_test, y_pred))
+
+best_score = 0
+min_samples_split_list = [i for i in range(5,11)]
+min_impurity_decrease_list = np.arange(0, 0.025, 0.005)
+for min_samples_split in min_samples_split_list:
+    for min_impurity_decrease in min_impurity_decrease_list:
+        decision_tree = tree.DecisionTreeClassifier(min_samples_split=min_samples_split, min_impurity_decrease=min_impurity_decrease)
+        decision_tree.fit(X_train, y_train)
+        y_pred = decision_tree.predict(X_test)
+        score = f1_score(y_test, y_pred)
+        if score > best_score:
+            best_score = score
+            best_parameters = {'min_samples_split':min_samples_split,'min_impurity_decrease':min_impurity_decrease,'best_score':best_score}
+print(best_parameters)
+
+# 不要なパラメータ削除
+X_train.drop('DD',axis=1,inplace=True)
+X_test.drop('DD',axis=1,inplace=True)
+print("X_train:",X_train.columns)
+print("X_test:",X_test.columns)
+
+best_score = 0
+min_samples_split_list = [i for i in range(5,11)]
+min_impurity_decrease_list = np.arange(0, 0.025, 0.005)
+for min_samples_split in min_samples_split_list:
+    for min_impurity_decrease in min_impurity_decrease_list:
+        decision_tree = tree.DecisionTreeClassifier(min_samples_split=min_samples_split, min_impurity_decrease=min_impurity_decrease)
+        decision_tree.fit(X_train, y_train)
+        y_pred = decision_tree.predict(X_test)
+        score = f1_score(y_test, y_pred)
+        if score > best_score:
+            best_score = score
+            best_parameters = {'min_samples_split':min_samples_split,'min_impurity_decrease':min_impurity_decrease,'best_score':best_score}
+print(best_parameters)
+
+
+
+# print(accuracy_score(y_test, y_pred))
+# # 決定木をインスタンス化する (木の最大深さ=3)
+# tree = DecisionTreeClassifier(max_depth=3)
+# # 学習
+# tree.fit(X_train, y_train)
+
+
+
+# ロジスティック回帰
+
+logistic_regression = LogisticRegression(random_state=0)
+logistic_regression
+
+logistic_regression = logistic_regression.fit(X_train,y_train)
+logistic_regression
+
+y_pred = logistic_regression.predict(X_test)
+y_pred
+
+# F価
+from sklearn.metrics import f1_score
+print(f1_score(y_test, y_pred))
+
+# 正則化項調整のためのパラメータ
+C_list =[10**i for i in range(-5, 6)]
+C_list
+
+for C in C_list:
+    logistic_regression =  LogisticRegression(random_state=0,C=C)
+    logistic_regression.fit(X_train, y_train)
+    y_pred = logistic_regression.predict(X_test)
+    print(C,f1_score(y_test, y_pred))
+
+
+
+
+
+# ランダムフォレスト
+
+random_forest = RandomForestClassifier(random_state=0)
+random_forest
+
+random_forest = random_forest.fit(X_train,y_train)
+random_forest
+
+y_pred = random_forest.predict(X_test)
+y_pred
+
+from sklearn.metrics import f1_score
+print(f1_score(y_test, y_pred))
+
+# ランダムフォレストの主要パラメータであるn_estimotrs（木の数）、max_depth（木の深さ）、max_features（分岐に用いる説明変数の数を設定）を変更
+n_estimators_list = [5,10,100,300]
+print(n_estimators_list)
+max_depth_list = [2,3,4]
+print(max_depth_list)
+max_feature_list = [2,3,5]
+print(max_feature_list)
+
+best_score = 0
+
+for n_estimators in n_estimators_list:
+    for max_depth in max_depth_list:
+        for max_features in max_feature_list:
+            random_forest =  RandomForestClassifier(n_estimators=n_estimators,max_depth=max_depth,max_features=max_features,random_state=0)
+            random_forest.fit(X_train, y_train)
+            y_pred = random_forest.predict(X_test)
+            score = f1_score(y_test, y_pred)
+            if score > best_score:
+                best_score = score
+                best_parameters = {'n_estimators':n_estimators,'max_depth':max_depth,'max_features':max_features,'best_score':best_score}
+print(best_parameters)
+
+random_forest =  RandomForestClassifier(n_estimators=10,max_depth=3,max_features=2,random_state=0)
+random_forest.fit(X_train, y_train)
+features = X_train.columns
+importances = random_forest.feature_importances_
+indices = np.argsort(importances)
+plt.barh(range(len(indices)), importances[indices])
+plt.yticks(range(len(indices)), features[indices])
+plt.show()
+
+
+# 目的変数が量的変数の場合（回帰）を確認
+y_train = X_train['Median']
+y_test = X_test['Median']
+X_train.drop('Median',axis=1,inplace=True)
+X_test.drop('Median',axis=1,inplace=True)
+print('X_train:',X_train.columns)
+print('X_test:',X_test.columns)
+print('y_train:',y_train.head())
+print('y_test:',y_test.head())
+
+
+random_forest = RandomForestRegressor(random_state=0)
+random_forest
+
+random_forest = random_forest.fit(X_train,y_train)
+random_forest
+
+y_pred = random_forest.predict(X_test)
+y_pred[:50]
+
+from sklearn.metrics import mean_absolute_error
+mean_absolute_error(y_pred,y_test)
+
+plt.scatter(y_pred,y_test)
+plt.title('Scatter Plot of Predict vs Test')
+plt.xlabel('Pred')
+plt.ylabel('Test')
+plt.grid()
+plt.show()
+
+
+# K-means
+
+kmeans_model = KMeans(n_clusters=4, random_state=0).fit(df)
+kmeans_model
+
+labels = kmeans_model.labels_
+labels[0:50]
+
+# cluster列を作成し、クラスタリング結果を格納
+df['cluster'] = labels
+titanic_add_cluster = df
+titanic_add_cluster.head()
+
+# クラスタリング結果を確認
+df['cluster'].value_counts()
+
+# グループ毎に各カラムの値の平均値を出
+titanic_add_cluster.groupby('cluster').mean()
+
+pca = PCA(random_state=0)
+pca
+
+# 主成分分析を実行
+pca.fit(titanic_add_cluster)
+
+# 次元削減を実行し、featureと言う変数に格納
+feature = pca.transform(titanic_add_cluster)
+feature
+
+# 主成分分析を可視化
+color_codes = {0:'#00FF00', 1:'#FF0000', 2:'#0000FF',  3:'#ffff00'}
+colors = [color_codes[x] for x in labels]
+colors[:50]
+
+plt.figure(figsize=(6, 6))
+plt.scatter(feature[:, 0], feature[:, 1], color=colors)
+plt.title("Principal Component Analysis")
+plt.xlabel("First principal component")
+plt.ylabel("Second principal component")
+plt.show()
+
+
+
+
+
+
+
+
+
 
 
 
