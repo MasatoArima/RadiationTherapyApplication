@@ -1,0 +1,32 @@
+
+
+{% extends "base.html" %}
+{% block title %}<h1>Sample</h1>{% endblock %}
+
+{% block content %}
+{% load static %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'download/home.css' %}"
+/>
+<h1>{{name|upper}}</h1>
+<h1>{{page_url|urlize}}</h1>
+<p>bmi: {{bmi|floatformat:2}}</p>
+<p>給料: {{saray|default:'秘密'}}</p>
+<p>{{fruits|random|lower}}</p>
+<p>{{fruits|join:','}}</p>
+<p>{{msg|linebreaks}}</p>
+<p>{{msg2|truncatechars:7}}</p>
+
+{% filter upper%}
+<p>aaa</p>
+<p>bbb</p>
+<p>vvv</p>
+{% endfilter %}
+
+<img src="{% static 'download/sample.jpg' %}" >
+
+{% endblock%}
+
+

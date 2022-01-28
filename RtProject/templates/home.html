@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}RT解析{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<div class="container">
+    <h1 class="text-center my-5">DICOMfileを用いた治療精度解析アプリ</h1>
+  <div class="row text-center">
+    <div class="col">
+      <p>
+        MCS<br>
+        JTCS<br>
+        線量誤差予測<br>
+        PLAN基本情報取得<br>
+      </p>
+    </div>
+    <div class="col">
+      <img src="{% static 'download/sample.jpg' %}" class="col-md-6 float-md-end mb-3 ms-md-3" alt="...">
+    </div>
+  </div>
+
+</div>
+
+{% endblock%}

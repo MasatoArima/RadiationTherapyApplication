@@ -45,6 +45,7 @@ ax.yaxis.set_ticks_position('left')
 ax.spines['left'].set_position(('data',0))
 
 
+# 重心を入力
 w_x = 24
 w_y = 23
 # print(z[0])

@@ -8,7 +8,7 @@ from pylab import *
 from scipy import stats
 import matplotlib.pyplot as plt  # プロット用
 from sklearn import tree
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import confusion_matrix, accuracy_score # 混同行列, 予測正解率を求める関数
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression
 import seaborn as sns
@@ -53,6 +53,8 @@ warnings.filterwarnings('ignore')
 # file読み込み
 df = pd.read_csv("test.csv", encoding="utf-8")
 
+
+# 線量誤差を０と１に分類
 def level_judge(ex):
     if  (-1.0 <= ex <= 1.0):
         return 1
