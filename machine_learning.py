@@ -39,6 +39,7 @@ from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 #データの標準化を行う
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 
 #グリッドサーチ
 from sklearn.model_selection import train_test_split, GridSearchCV
@@ -51,6 +52,18 @@ warnings.filterwarnings('ignore')
 
 # file読み込み
 df = pd.read_csv("test.csv", encoding="utf-8")
+
+# 分散正規化のインスタンスを生成
+stdsc = StandardScaler()
+# 分散正規化を実行
+stdsc.fit(df)
+stdsc.transform(df)
+
+# 最小最大正規化のインスタンスを生成
+mmsc = MinMaxScaler()
+# 最小最大正規化を実行
+mmsc.fit(df)
+mmsc.transform(df)
 
 
 # 線量誤差を０と１に分類
