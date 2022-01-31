@@ -12,7 +12,6 @@ from sklearn.metrics import confusion_matrix, accuracy_score # 混同行列, 予
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LinearRegression
 import seaborn as sns
-import seaborn
 from pandas import DataFrame
 from sklearn import linear_model, datasets
 from pandas.plotting import scatter_matrix
@@ -67,7 +66,7 @@ df.to_excel('test.xlsx')
 
 
 # One-hotエンコーディング
-df_b_moved = pd.get_dummies(df.loc[:, "判定"], prefix="judge")
+df_b_moved = pd.get_dummies(df.loc[:, "error"], prefix="judge")
 df_merged = pd.concat([df, df_b_moved], axis=1)
 
 # 各カラムのデータ型を確認
@@ -90,7 +89,7 @@ print("---------------------------")
 df_merged_except_object.corr().style.background_gradient(axis=None)
 
 # 散布図行列
-_ = scatter_matrix(df_merged_except_objec)
+_ = scatter_matrix(df_merged_except_object)
 plt.show()
 
 # 相関係数算出のためのデータ指定
@@ -125,7 +124,7 @@ print("---------------------------")
 # 線形回帰に正則化項を加えた手法に、ラッソ回帰(lasso regression)とリッジ回帰(ridge regression)がある
 # ロジスティック回帰は分類問題に用いる手法
 # ランダムフォレスト
-# SVM
+# SVM　？？？？？？？？？？？？？？？？？？？？
 # ニューラルネットワーク（線形分類にしかできない）　➡　多重パーセプトロン
 # 自己回帰モデル(ARモデル)　➡　時系列データを対象にする
 
@@ -144,7 +143,7 @@ print("---------------------------")
 
 # deep learning
 
-# 直線回帰分
+# 直線回帰分➡テストデータと訓練データにわける
 x = df[['calculatedose']].values
 y = df[['chamberdose']].values
 model_lr = LinearRegression()
@@ -205,6 +204,10 @@ print("---------------------------")
 
 # 決定木
 # 学習データセットとテストデータに分割する
+# データの分割の仕方＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿＿？
+x = df.iloc[:, 1]  # 説明変数
+y = df.iloc[:, 2]  # 目的変数
+X_train, X_test, y_train, y_test = train_test_split(x, y, test_size=0.3, random_state=123)
 # 分類木を読み込み
 decision_tree = tree.DecisionTreeClassifier()
 # decision_tree = DecisionTreeRegressor()
