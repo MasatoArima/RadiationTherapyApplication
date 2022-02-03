@@ -1,3 +1,20 @@
-p {
+/* p {
   color: red;
+} */
+
+.mail-class {
+  width: 70%;
+  color: aqua;
+}
+
+label[for="id_mail"] {
+  color: red;
+}
+
+#id_job{
+  list-style: none;
+}
+
+.hobbies_class{
+  list-style: none;
 }

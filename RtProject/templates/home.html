@@ -2,6 +2,7 @@
 {% block title %}RT解析{% endblock %}
 {% block content %}
 {% load static %}
+<link rel="stylesheet" href="{% static 'download/home.css' %}"
 
 <div class="container">
     <h1 class="text-center my-5">DICOMfileを用いた治療精度解析アプリ</h1>
@@ -18,7 +19,16 @@
       <img src="{% static 'download/sample.jpg' %}" class="col-md-6 float-md-end mb-3 ms-md-3" alt="...">
     </div>
   </div>
+  <form method="POST">
+  {% csrf_token %}
+    <table>
+      {{form.as_table}}
+    </table>
+    <input type="submit" value="送信">
+  </form>
 </div>
+
+
 
 {% endblock%}
 

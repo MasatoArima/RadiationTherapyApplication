@@ -1,9 +1,19 @@
 from django.shortcuts import render
+from . import forms
 
 # Create your views here.
 
 def home(request):
-    return render(request, 'home.html', context = {'value': 'hello'})
+    form = forms.UserInfo()
+    if request.method == 'POST':
+        form = forms.UserInfo(request.POST)
+        if form.is_valid():
+            print('バリデーション成功')
+            # print(
+            #     f"name: {form.cleaned_data['name']},mail: {form.cleaned_data['mail']},age: {form.cleaned_data['age']}"
+            # )
+            print(form.cleaned_data)
+    return render(request, 'home.html', context = {'form': form})
 
 def about(request):
     my_name = 'masato arima'
