@@ -1,8 +1,10 @@
 import email
+from pyexpat import model
 from statistics import mode
 from venv import create
 from django.db import models
 from django.utils import timezone
+from matplotlib.pyplot import title
 import pytz
 
 # Create your models here.
@@ -61,3 +63,8 @@ class Prefectures(models.Model):
 
     class Meta:
         db_table = 'prefectures'
+
+class Post(models.Model):
+    name = models.CharField(max_length=50)
+    title = models.CharField(max_length=255)
+    memo = models.CharField(max_length=255)

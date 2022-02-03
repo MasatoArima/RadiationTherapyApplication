@@ -3,11 +3,13 @@ from bleach import clean
 from click import Choice
 from django import forms
 from django.core import validators
+from pyrsistent import field
+from .models import Post
 
 def check_name(value):
     if value == 'あああああ':
         raise forms.ValidationError('適応できません')
-    
+
 
 class UserInfo(forms.Form):
     name = forms.CharField(label='名前', min_length=5, max_length=10, validators=[check_name])
@@ -31,20 +33,71 @@ class UserInfo(forms.Form):
     ), widget=forms.CheckboxSelectMultiple)
     homepage = forms.URLField(required=False)
     memo = forms.CharField(widget=forms.Textarea)
-    
+
     def __init__(self, *args, **kwargs):
         super(UserInfo, self).__init__(*args, **kwargs)
         self.fields['job'].widget.attrs['id'] = 'id_job'
         self.fields['hobbies'].widget.attrs['class'] = 'hobbies_class'
-    
+
     def clean_homepage(self):
         homepage = self.cleaned_data['homepage']
         if not homepage.startswith('https'):
             raise forms.ValidationError('ホームページのURLはhttpsのみです！')
-    
+
     def clean(self):
         cleaned_data = super().clean()
         mail = cleaned_data['mail']
         verify_mail = cleaned_data['verify_mail']
         if mail != verify_mail:
             raise forms.ValidationError('一致しません！')
+
+
+
+class BaseForm(forms.ModelForm):
+    def save(self, *args, **kwargs):
+        print(f'Form: {self.__class__.__name__}実行')
+        return super(BaseForm, self).save( *args, **kwargs)
+
+class PostModelForm(BaseForm):
+    name = forms.CharField(label='なまえ', max_length=50)
+    title = forms.CharField(max_length=255)
+    memo = forms.CharField(widget=forms.Textarea(attrs={'rows': 30, 'cols':20}))
+
+    class Meta:
+        model = Post
+        fields = '__all__'
+        # fields = ['name', 'title']
+        # exclude = ['title']
+
+    def save(self, *args, **kwargs):
+        obj = super(PostModelForm, self).save(commit=False, *args, **kwargs)
+        obj.name = obj.name.upper()
+        print(type(obj))
+        print('save実行')
+        obj.save()
+        return obj
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if name == 'ああああ':
+            raise validators.ValidationError('error')
+        return name
+
+    def clean_title(self):
+        title = self.cleaned_data.get('title')
+        if title == 'ああああ':
+            raise validators.ValidationError('このタイトルはとうろくできません')
+        return title
+
+    def clean_memo(self):
+        memo = self.cleaned_data.get('memo')
+        if memo == 'ああああ':
+            raise validators.ValidationError('error')
+        return memo
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        title = cleaned_data.get('title')
+        is_exists = Post.objects.filter(title=title).first()
+        if is_exists:
+            raise validators.ValidationError('そのタイトルは存在します')

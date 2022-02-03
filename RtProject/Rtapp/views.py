@@ -9,9 +9,6 @@ def home(request):
         form = forms.UserInfo(request.POST)
         if form.is_valid():
             print('バリデーション成功')
-            # print(
-            #     f"name: {form.cleaned_data['name']},mail: {form.cleaned_data['mail']},age: {form.cleaned_data['age']}"
-            # )
             print(form.cleaned_data)
     return render(request, 'home.html', context = {'form': form})
 
@@ -31,7 +28,12 @@ def about(request):
     })
 
 def sample1(request):
-    return render(request, 'sample1.html')
+    form = forms.PostModelForm()
+    if request.method == 'POST':
+        form = forms.PostModelForm(request.POST)
+        if form.is_valid():
+            form.save()
+    return render(request, 'sample1.html', context = {'form': form})
 
 def sample2(request):
     return render(request, 'sample2.html')
@@ -70,3 +72,5 @@ def sample3(request):
     return render(request, 'sample3.html', context={
         'country': country
     })
+
+
