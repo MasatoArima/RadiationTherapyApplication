@@ -1,10 +1,14 @@
 {% extends "base.html" %}
-{% block title %}<h1>index</h1>{% endblock %}
-
+{% block title %}Sample2 {{ block.super }}{% endblock %}
 {% block content %}
-国名: {{ country.name}}<br>
-人口: {{ country.population}}<br>
-首都: {{ country.capital}}<br>
+  <form method="POST">
+  {% csrf_token %}
+  {% comment %} {{ formset.as_p}} {% endcomment %}
+  {{ formset.management_form }}
+  {% for form in formset %}
+    {{form.as_p}}
+    <hr>
+  {% endfor %}
+    <input type="submit" value="送信">
+  </form>
 {% endblock%}
-
-

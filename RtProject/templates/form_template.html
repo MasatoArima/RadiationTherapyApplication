@@ -1,0 +1,24 @@
+  {% comment %} <form method="POST">
+  {% csrf_token %}
+    <table>
+      {{form.as_table}}
+    </table>
+    <input type="submit" value="送信">
+  </form> {% endcomment %}
+
+<form method="POST">
+  {% csrf_token %}
+  <p style="color:red;">{{ form.non_field_errors}}</p>
+  {% if form.errors %}
+    {% for key, value in form.errors.items %}
+      {% if key != '__all__' %}
+        <p style="color:red;">{{key}}:{{value.as_text}}</p>
+        {% endif %}
+    {% endfor %}
+  {% endif %}
+
+  {{form.name.label}}:{{form.name}}
+  {{form.title.label}}:{{form.title}}
+  {{form.memo.label}}:{{form.memo}}
+  <input type="submit" value="送信">
+</form>

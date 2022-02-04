@@ -1,5 +1,9 @@
 {% extends "base.html" %}
 {% block title %}Sample2 {{ block.super }}{% endblock %}
 {% block content %}
-  {% include "form_template2.html" with as_ul=True method='GET' action='aaa'%}
+  <form method="POST">
+  {% csrf_token %}
+  {{ formset.as_p}}
+  <input type="submit" value="送信">
+  </form>
 {% endblock%}

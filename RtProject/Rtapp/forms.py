@@ -4,7 +4,7 @@ from click import Choice
 from django import forms
 from django.core import validators
 from pyrsistent import field
-from .models import Post
+from .models import ModelSetPost, Post, User
 
 def check_name(value):
     if value == 'あああああ':
@@ -101,3 +101,21 @@ class PostModelForm(BaseForm):
         is_exists = Post.objects.filter(title=title).first()
         if is_exists:
             raise validators.ValidationError('そのタイトルは存在します')
+
+class FormSetPost(forms.Form):
+    title = forms.CharField(label='タイトル')
+    memo = forms.CharField(label='メモ')
+    
+class ModelFormSetPost(forms.ModelForm):
+    title = forms.CharField(label='タイトル')
+    memo = forms.CharField(label='メモ')
+    
+    class Meta:
+        model = ModelSetPost
+        fields = '__all__'
+
+class UserForm(forms.ModelForm):
+    
+    class Meta:
+        model = User
+        fields = '__all__'
