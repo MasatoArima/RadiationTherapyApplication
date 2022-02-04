@@ -1,9 +1,11 @@
+from turtle import update
 from django.shortcuts import render
 from django.forms import formset_factory,modelformset_factory
 from fsspec import filesystem
 from matplotlib.style import context
+from psutil import users
 
-from .models import ModelSetPost
+from .models import ModelSetPost, User
 from . import forms
 from django.core.files.storage import FileSystemStorage
 import os
@@ -12,13 +14,8 @@ import os
 # Create your views here.
 
 def home(request):
-    form = forms.UserInfo()
-    if request.method == 'POST':
-        form = forms.UserInfo(request.POST)
-        if form.is_valid():
-            print('バリデーション成功')
-            print(form.cleaned_data)
-    return render(request, 'home.html', context = {'form': form})
+    users = User.objects.all()
+    return render(request, 'home.html', context={'users': users})
 
 def about(request):
     my_name = 'masato arima'
@@ -34,6 +31,16 @@ def about(request):
         'my_info': my_info,
         'status': status,
     })
+
+def sign_up(request):
+    form = forms.UserInfo()
+    if request.method == 'POST':
+        form = forms.UserInfo(request.POST)
+        if form.is_valid():
+            print('バリデーション成功')
+            print(form.cleaned_data)
+    return render(request, 'sign_up.html', context = {'form': form})
+
 
 def sample1(request):
     form = forms.PostModelForm()
@@ -51,27 +58,6 @@ def sample2(request):
             form.save()
     return render(request, 'sample2.html', context = {'form': form})
 
-def sample(request):
-    name = 'arima masato'
-    height = 165.4
-    weight = 60
-    bmi = weight / (height / 100)**2
-    page_url = 'ホームぺージ: https://www.google.com'
-    favorite_fruits = ['Apple', 'Grape', 'Lemon']
-    msg ="""
-    hello
-    my name is
-    masato
-    """
-    msg2 = '123456789'
-    return render(request, 'sample.html', context={
-        'name': name,
-        'bmi': bmi,
-        'page_url': page_url,
-        'fruits': favorite_fruits,
-        'msg': msg,
-        'msg2': msg2,
-    })
 
 class Country:
 
@@ -113,7 +99,7 @@ def upload_sample(request):
 def upload_model_form(request):
     user = None
     if request.method == 'POST':
-        form = forms.UserForm(request.POST, request.FILES)
+        form = forms.UserForm(request.POST or None, request.FILES or None)
         if form.is_valid():
             user = form.save()
     else:
@@ -121,3 +107,39 @@ def upload_model_form(request):
     return render(request, 'upload_model_form.html', context={
         'form': form, 'user': user
     })
+
+def update_user(request, id):
+    user = User.objects.get(id=id)
+    update_form = forms.UserUpdateForm(
+        initial = {
+            'name': user.name, 'age': user.age, 'picture': user.picture
+        }
+    )
+    if request.method =='POST':
+        update_form = forms.UserUpdateForm(request.POST or None, request.FILES or None)
+        if update_form.is_valid():
+            user.name = update_form.cleaned_data['name']
+            user.age = update_form.cleaned_data['age']
+            picture = update_form.cleaned_data['picture']
+            if picture:
+                fs = FileSystemStorage()
+                file_name = fs.save(os.path.join('user', picture.name), picture)
+                user.picture = file_name
+            user.save()
+    return render(
+        request, 'update_user.html', context={'user': user, 'update_form': update_form}
+    )
+
+def delete_user(request, id):
+    delete_form = forms.UserDeleteForm(
+        initial = {
+            'id':id
+        }
+    )
+    if request.method == 'POST':
+        delete_form = forms.UserDeleteForm(request.POST or None)
+        if delete_form.is_valid():
+            User.objects.get(id=delete_form.cleaned_data['id']).delete()
+    return render(
+        request, 'delete_user.html', context={'delete_form':delete_form}
+    )

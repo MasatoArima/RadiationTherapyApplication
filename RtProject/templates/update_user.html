@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}From Upload {{ block.super }}{% endblock %}
+{% block content %}
+
+<h1>User情報更新画面</h1>
+<form method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  {{ update_form.as_p }}
+  <input type="submit" value="更新">
+</form>
+<p><a href="{% url 'Rt_app:delete_user' id=user.id %}">削除する</a></p>
+
+<img src="{{ user.picture.url }}">
+
+{% endblock%}

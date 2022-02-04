@@ -114,7 +114,22 @@ class ModelFormSetPost(forms.ModelForm):
         model = ModelSetPost
         fields = '__all__'
 
+
+
+
 class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+class UserUpdateForm(forms.ModelForm):
+    picture = forms.FileField(label='ファイルアップロード', required=False)
+    class Meta:
+        model = User
+        fields = '__all__'
+
+class UserDeleteForm(forms.Form):
+    id = forms.IntegerField(widget=forms.HiddenInput)
     
     class Meta:
         model = User
