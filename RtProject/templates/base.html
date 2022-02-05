@@ -22,18 +22,26 @@
             <a class="nav-link" href="{% url 'Rt_app:about'%}">概要 <span class="sr-only">(current)</span></a>
           </li>
           <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              解析項目
-            </a>
-            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="{% url 'Rt_app:sign_up'%}">会員登録</a>
-              <a class="dropdown-item" href="{% url 'Rt_app:sample1'%}">memoForm</a>
-              <a class="dropdown-item" href="{% url 'Rt_app:sample2'%}">Sample2</a>
-              <a class="dropdown-item" href="{% url 'Rt_app:sample3'%}">Sample3</a>
-              <a class="dropdown-item" href="{% url 'Rt_app:sample4'%}">Sample4</a>
-              <a class="dropdown-item" href="{% url 'Rt_app:upload_sample'%}">upload</a>
-              <a class="dropdown-item" href="{% url 'Rt_app:upload_model_form'%}">upload-model</a>
-            </div>
+            {% if user.is_authenticated %}
+            <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">解析項目</a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'Rt_app:sign_up'%}">会員登録</a>
+                <a class="dropdown-item" href="{% url 'Rt_app:users'%}">会員一覧</a>
+                <a class="dropdown-item" href="{% url 'Rt_app:sample3'%}">Sample3</a>
+                <a class="dropdown-item" href="{% url 'Rt_app:sample4'%}">Sample4</a>
+                <a class="dropdown-item" href="{% url 'Rt_app:upload_sample'%}">upload</a>
+                <a class="dropdown-item" href="{% url 'Rt_app:upload_model_form'%}">upload-model</a>
+                <a class="dropdown-item" href="{% url 'user:user_list'%}">testtest</a>
+                <a class="dropdown-item" href="{% url 'user:user_logout' %}">ログアウト</a>
+              </div>
+            {% else %}
+            <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">解析ページ</a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'admin:index' %}">管理画面</a>
+                <a class="dropdown-item" href="{% url 'user:register' %}">登録画面</a>
+                <a class="dropdown-item" href="{% url 'user:user_login' %}">ログイン</a>
+              </div>
+            {% endif %}
           </li>
         </ul>
       </div>

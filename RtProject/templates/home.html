@@ -1,14 +1,24 @@
 {% extends "base.html" %}
-{% block title %}RT解析{% endblock %}
+
+{% block title %}
+RT解析
+{% endblock %}
+
 {% block content %}
+
 {% load static %}
-<link rel="stylesheet" href="{% static 'download/home.css' %}"
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="{% static 'home.css' %}"
+/>
 
 <div class="container">
     <h1 class="text-center my-5">DICOMfileを用いた治療精度解析アプリ</h1>
+    <h1 class="text-center my-5">作成中</h1>
   <div class="row text-center">
     <div class="col">
-      <p>
+      <p class='aaa'>
         MCS<br>
         JTCS<br>
         線量誤差予測<br>
@@ -16,30 +26,10 @@
       </p>
     </div>
     <div class="col">
-      <img src="{% static 'download/sample.jpg' %}" class="col-md-6 float-md-end mb-3 ms-md-3" alt="...">
+      <img src="{% static 'test.jpg' %}" class="col-md-6 float-md-end mb-3 ms-md-3" alt="...">
     </div>
   </div>
 </div>
-
-<div class="container">
-    <h1 class="text-center my-5">会員一覧</h1>
-  <div class="row">
-    <div class="col">
-      <table>
-        <th>No.</th>
-        <th>名前</th>
-        {% for user in users %}
-        <tr>
-          <td>{{user.id}}</td>
-          <td><a href="{% url 'Rt_app:update_user' id=user.id %}">{{user.name}}</a></td>
-        </tr>
-        {% endfor %}
-      </table>
-    </div>
-  </div>
-</div>
-
-
 
 {% endblock%}
 
