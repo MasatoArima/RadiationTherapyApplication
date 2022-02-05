@@ -56,11 +56,11 @@ def users(request):
 
 @login_required
 def user(request, id):
-    user = get_object_or_404(User, pk=id)
+    user2 = get_object_or_404(User, pk=id)
     # user = User.objects.filter(id=id).first()
     # if user is None:
     #     return redirect('Rt_app:users')
-    return render(request, 'user.html', context = {'user': user})
+    return render(request, 'user.html', context = {'user': user2})
 
 @login_required
 def upload_model_form(request):
