@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% if messages %}
+  {% for message in messages %}
+    <div>{{ message.message }}</div>
+  {% endfor %}
+{% endif %}
+<div class="container">
+    <h1 class="text-center my-5">DICOMfileを用いた治療精度解析アプリ</h1>
+  <div class="row text-center">
+    <div class="col">
+      <h3><strong>解析項目</strong></h3>
+      <p>
+        MCS<br>
+        JTCS<br>
+        線量誤差予測<br>
+        PLAN基本情報取得<br>
+      </p>
+      <p>
+        <strong>★DICOMファイル ★CTデータ ★ストラクチャセット</strong><br>
+        などを用いて解析を行います<br>
+      </p>
+    </div>
+    <div class="col">
+      <img src="{% static 'picture/home.jpg' %}" class="col-md-6 float-md-end mb-3 ms-md-3" alt="...">
+    </div>
+  </div>
+</div>
+{% endblock %}

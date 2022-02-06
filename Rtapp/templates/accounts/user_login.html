@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+    <div>{{ message.message }}</div>
+  {% endfor %}
+{% endif %}
+<div class="container">
+    <h1 class="text-center my-5">ログイン画面</h1>
+  <div class="row justify-content-center">
+    <form method="POST">
+    {% csrf_token %}
+      <table>
+        {{ login_form.as_table }}
+      </table>
+      <input type="submit" value="ログイン" class='mt-3'>
+    </form>
+  </div>
+</div>
+{% endblock %}

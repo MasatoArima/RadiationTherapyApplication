@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+    <div>{{ message.message }}</div>
+  {% endfor %}
+{% endif %}
+<div class="container">
+    <h1 class="text-center my-5">RTデータ一覧画面</h1>
+  <div class="row justify-content-center">
+    <p><a class="navbar-brand" href="{% url 'analytics:create_rtdata' %}">データの新規作成</a></p>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>タイトル</th>
+          <th>作成者</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for rtdata in rtdatas %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          {% comment %} <td><a href="{% url 'analytics:post_comments' theme_id=theme.id %}">{{ rtdata.region }}</a></td> {% endcomment %}
+          <td>{{ rtdata.region }}</td>
+          {% if rtdata.user.id == user.id %}
+            <td><a href="{% url 'analytics:edit_rtdata' id=rtdata.id %}">{{ rtdata.user }}</a></td>
+          {% else %}
+            <td>{{ rtdata.user }}</td>
+          {% endif %}
+        </tr>
+      {% endfor %}
+      </tbody>
+  </table>
+  </div>
+</div>
+
+{% endblock %}

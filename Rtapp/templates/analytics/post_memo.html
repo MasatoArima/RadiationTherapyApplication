@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block content %}
+{% if messages %}
+  {% for message in messages %}
+    <div>{{ message.message }}</div>
+  {% endfor %}
+{% endif %}
+<div class="container">
+    <h1 class="text-center my-5">解析メモ画面</h1>
+  <div class="row">
+    <div class='col-6'>
+      {% for memo in memos %}
+        <div>
+          <div>タイトル: {{ memo.title }}</div>
+          <div>{{ memo.memo | linebreaks }}</div>
+        </div>
+        <div class="col"><hr></div>
+      {% endfor %}
+    </div>
+    <div class='col-6'>
+      {% if user.is_authenticated %}
+        <div>
+          <form method="POST">
+          {% csrf_token %}
+          {{ post_memo_form.title }}
+          {{ post_memo_form.memo }}<br>
+          <input type="button" value="一時保存" id="save_memo">
+          <input type="submit" value="コメント送信">
+          </form>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+$("#save_memo").click(function(){
+    var memo = $("#id_memo").val();
+    $.ajax({
+        url: "{% url 'analytics:save_memo' %}",
+        type: "GET",
+        data: {memo: memo, user_id: "{{ user.id }}"},
+        dataType: "json",
+        success: function(json){
+            if(json.message){
+                alert(json.message);
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
