@@ -66,6 +66,8 @@ def post_memo(request, user_id):
     saved_memo = cache.get(f'saved_memo-user_id={request.user.id}', '')
     post_memo_form = forms.PostMemoForm(request.POST or None, initial={'memo': saved_memo})
     memo = Memo.objects.fetch_by_user_id(user_id)
+    if user_id != request.user.id:
+        raise Http404
     if post_memo_form.is_valid():
         if not request.user.is_authenticated:
             raise Http404
@@ -83,10 +85,6 @@ def save_memo(request):
         if memo:
             cache.set(f'saved_memo-user_id={request.user.id}', memo)
             return JsonResponse({'message': '一時保存しました'})
-
-
-
-
 
 
 # def upload_sample(request):
