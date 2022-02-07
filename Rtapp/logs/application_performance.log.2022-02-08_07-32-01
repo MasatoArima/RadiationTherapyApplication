@@ -1,0 +1,3 @@
+2022-02-08 07:32:01,870 INFO [C:\Users\afoc0\Work\Programming\Github\RadiationTherapyApplication\Rtapp\Rtapp\middleware.py:27] /accounts/home/: 0.009440422058105469s
+2022-02-08 07:32:03,662 INFO [C:\Users\afoc0\Work\Programming\Github\RadiationTherapyApplication\Rtapp\Rtapp\middleware.py:27] /analytics/create_rtdata: 0.0019927024841308594s
+2022-02-08 07:32:04,638 INFO [C:\Users\afoc0\Work\Programming\Github\RadiationTherapyApplication\Rtapp\Rtapp\middleware.py:27] /analytics/list_rtdatas/: 0.0020012855529785156s

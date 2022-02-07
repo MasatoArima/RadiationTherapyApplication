@@ -1,7 +1,8 @@
 from django.db import models
 from django.utils import timezone
 import pytz
-
+from django.urls import reverse_lazy
+import os
 # import logging
 # application_logger = logging.getLogger('application-logger')
 
@@ -30,6 +31,9 @@ class Rtdatas(BaseModel):
     class Meta:
         db_table = 'rtdata'
         verbose_name_plural = 'RTデータ'
+
+    def get_absolute_url(self):
+        return reverse_lazy('analytics:detail_rtdata', kwargs={'pk': self.pk})
 
     def __str__(self):
         return  self.region

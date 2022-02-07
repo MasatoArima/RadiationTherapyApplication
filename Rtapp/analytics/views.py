@@ -9,8 +9,10 @@ from django.http import JsonResponse
 from django.core.files.storage import FileSystemStorage
 import os
 from datetime import datetime
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import (CreateView, UpdateView, DeleteView, FormView,)
+from django.views.generic.base import RedirectView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 
@@ -27,6 +29,16 @@ application_logger = logging.getLogger('application-logger')
 
 
 # Create your views here.
+class RtdataDetailView(DetailView):
+    model = Rtdatas
+    template_name = 'analytics/detail_rtdata.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        print(context)
+        # context['form'] = forms.BookForm()
+        return context
+
 class RtdataListView(ListView):
     model = Rtdatas
     template_name = 'analytics/list_rtdatas.html'
@@ -57,7 +69,7 @@ class RtdataCreateView(CreateView):
     #     initial['region'] = 'sample'
     #     return initial
 
-class RtdataUpdateView(UpdateView):
+class RtdataUpdateView(SuccessMessageMixin, UpdateView):
     model = Rtdatas
     template_name = 'analytics/update_rtdata.html'
     form_class = forms.UpdateRtdataForm
@@ -67,9 +79,8 @@ class RtdataUpdateView(UpdateView):
         # return reverse_lazy('analytics:edit_rtdata', kwargs={'pk': self.object.id})
         return reverse_lazy('analytics:list_rtdatas')
 
-    # def get_success_message(self, cleaned_data):
-    #     print(cleaned_data)
-    #     return cleaned_data.get('name') + 'を更新しました'
+    def get_success_message(self, cleaned_data):
+        return cleaned_data.get('region') + 'に更新しました'
 
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
@@ -87,12 +98,51 @@ class RtdataUpdateView(UpdateView):
     #         picture_form.save(book=book)
     #     return super(BookUpdateView, self).post(request, *args, **kwargs)
 
-class RtdataDeleteView(DeleteView):
+class RtdataDeleteView(SuccessMessageMixin, DeleteView):
     model = Rtdatas
     template_name = 'analytics/delete_rtdata.html'
     success_url = reverse_lazy('analytics:list_rtdatas')
+    success_message = 'データを削除しました'
+
+class RtdataFormView(FormView):
+
+    template_name = 'analytics/form_rtdata.html'
+    form_class = forms.CreateRtdataForm
+    success_url = reverse_lazy('analytics:list_rtdatas')
+
+    def get_initial(self):
+        initial = super(RtdataFormView, self).get_initial()
+        initial['name'] = 'form sample'
+        return initial
+
+    def form_valid(self, form):
+        if form.is_valid():
+            form.instance.create_at = datetime.now()
+            form.instance.update_at = datetime.now()
+            form.instance.user = self.request.user
+            form.save()
+        return super(RtdataFormView, self).form_valid(form)
 
 
+class ToridogRedirectView(RedirectView):
+    url = 'http://52.199.116.176/'
+
+    #     def get_redirect_url(self, *args, **kwargs):
+    #         book = Books.objects.first()
+    #         if 'pk' in kwargs:
+    #             return reverse_lazy('store:detail_book', kwargs={'pk': kwargs['pk']})
+            
+    #         return reverse_lazy('store:edit_book', kwargs={'pk': book.pk})
+
+
+    # def delete_picture(request, pk):
+    #     picture = get_object_or_404(Pictures, pk=pk)
+    #     picture.delete()
+    #     # import os
+    #     # if os.path.isfile(picture.picture.path):
+    #     #     os.remove(picture.picture.path)
+    #     messages.success(request, '画像を削除しました')
+    #     return redirect('store:edit_book', pk=picture.book.id)
 
 
 
@@ -128,9 +178,6 @@ class RtdataDeleteView(DeleteView):
 #     return render(
 #         request, 'analytics/edit_rtdata.html', context={'edit_rtdata_form': edit_rtdata_form, 'id': id,}
 #     )
-
-
-
 
 # def delete_rtdata(request, id):
 #     rtdata = get_object_or_404(Rtdatas, id=id)

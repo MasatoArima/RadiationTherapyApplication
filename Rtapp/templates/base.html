@@ -45,6 +45,12 @@
               </div>
             {% endif %}
           </li>
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle"  id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">create_app</a>
+              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <a class="dropdown-item" href="{% url 'analytics:toridog_redirect_view' %}">ToriDog<span class="sr-only">(current)</span></a>
+              </div>
+          </li>
           <li class="nav-item active">
             {% if request.user.is_anonymous %}
               <a class="nav-link">***** 未ログイン *****<span class="sr-only">(current)</span></a>

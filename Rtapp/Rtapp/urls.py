@@ -18,14 +18,15 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from accounts.views import top
-# from accounts.views import show_error_page, top, server_error_page
 
+# from accounts.views import show_error_page, top, server_error_page
 
 urlpatterns = [
     path('', top ),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('analytics/', include('analytics.urls')),
+
 ]
 
 # handler404 = show_error_page

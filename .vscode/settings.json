@@ -3,6 +3,8 @@
     "JTCS",
     "numpy",
     "pydicom",
+    "Rtdata",
+    "Rtdatas",
     "tosplitdata",
     "xjaw",
     "yjaw"
