@@ -11,8 +11,10 @@
     <form method="POST">
     {% csrf_token %}
       <table>
-        {{ login_form.as_table }}
+        {% comment %} {{ login_form.as_table }} {% endcomment %}
+        {{ form.as_table }}
       </table>
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
       <input type="submit" value="ログイン" class='mt-3'>
     </form>
   </div>

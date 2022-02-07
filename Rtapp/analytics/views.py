@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from . import forms
 from django.contrib import messages
 from .models import Rtdatas, Plandatas, Stracturedatas, Ctdatas, Memo
-from accounts.models import User
+from accounts.models import Users
 from django.http import Http404
 from django.core.cache import cache
 from django.http import JsonResponse

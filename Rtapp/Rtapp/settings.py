@@ -77,7 +77,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'Rtapp.wsgi.application'
-AUTH_USER_MODEL = 'accounts.User'
+AUTH_USER_MODEL = 'accounts.Users'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -142,3 +142,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+LOGIN_URL = '/accounts/user_login/'
+LOGIN_REDIRECT_URL = '/accounts/home/'
+LOGOUT_REDIRECT_URL = '/accounts/home/'
+
+SESSION_COOKIE_AGE = 21600 # (6時間)
