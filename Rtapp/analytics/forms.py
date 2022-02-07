@@ -2,13 +2,35 @@ from logging import PlaceHolder
 from attr import fields
 from django import forms
 from .models import Rtdatas, Plandatas, Stracturedatas, Ctdatas, Memo
+from datetime import datetime
 
 class CreateRtdataForm(forms.ModelForm):
     region = forms.CharField(label='照射部位')
 
     class Meta:
         model = Rtdatas
-        fields = ('region',)
+        fields = ['region',]
+
+    def save(self, *args, **kwargs):
+        obj = super(CreateRtdataForm, self).save(commit=False)
+        obj.create_at = datetime.now()
+        obj.update_at = datetime.now()
+        obj.save()
+        return obj
+
+class UpdateRtdataForm(forms.ModelForm):
+
+    class Meta:
+        model = Rtdatas
+        fields = ['region',]
+
+    def save(self, *args, **kwargs):
+        obj = super(UpdateRtdataForm, self).save(commit=False)
+        obj.update_at = datetime.now()
+        obj.save()
+        return obj
+
+
 
 class DeleteRtdataForm(forms.ModelForm):
 

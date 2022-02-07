@@ -1,13 +1,27 @@
 from django.urls import path
 from . import views
+from .views import(
+    RtdataCreateView, RtdataUpdateView, RtdataDeleteView, RtdataListView
+)
 
 app_name = 'analytics'
 
 urlpatterns = [
-    path('create_rtdata', views.create_rtdata, name='create_rtdata'),
-    path('list_rtdatas', views.list_rtdatas, name='list_rtdatas'),
-    path('edit_rtdata/<int:id>', views.edit_rtdata, name='edit_rtdata'),
-    path('delete_rtdata/<int:id>', views.delete_rtdata, name='delete_rtdata'),
+    # path('create_rtdata', views.create_rtdata, name='create_rtdata'),
+    # path('list_rtdatas', views.list_rtdatas, name='list_rtdatas'),
+    # path('edit_rtdata/<int:id>', views.edit_rtdata, name='edit_rtdata'),
+    # path('delete_rtdata/<int:id>', views.delete_rtdata, name='delete_rtdata'),
     path('post_memo/<int:user_id>', views.post_memo, name='post_memo'),
     path('save_memo', views.save_memo, name='save_memo'),
+    path('list_rtdatas/', RtdataListView.as_view(), name='list_rtdatas'),
+    path('list_rtdatas/<name>', RtdataListView.as_view(), name='list_rtdatas'),
+    path('create_rtdata', RtdataCreateView.as_view(), name='create_rtdata'),
+    path('edit_rtdata/<int:pk>', RtdataUpdateView.as_view(), name='edit_rtdata'),
+    path('delete_rtdata/<int:pk>', RtdataDeleteView.as_view(), name='delete_rtdata'),
+#     path('book_form/', BookFormView.as_view(), name='book_form'),
+#     path('google/', RedirectView.as_view(url='https://google.co.jp')),
+#     path('book_redirect_view/', BookRedirectView.as_view(), name='book_redirect_view'),
+#     path('book_redirect_view/<int:pk>', BookRedirectView.as_view(), name='book_redirect_view'),
+#     path('delete_picture/<int:pk>', delete_picture, name='delete_picture'),
 ]
+

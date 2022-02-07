@@ -15,23 +15,31 @@
           <th>#</th>
           <th>タイトル</th>
           <th>作成者</th>
+          <th></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>
-      {% for rtdata in rtdatas %}
-        <tr>
-          <td>{{ forloop.counter }}</td>
-          {% comment %} <td><a href="{% url 'analytics:post_comments' theme_id=theme.id %}">{{ rtdata.region }}</a></td> {% endcomment %}
-          <td>{{ rtdata.region }}</td>
-          {% if rtdata.user.id == user.id %}
-            <td><a href="{% url 'analytics:edit_rtdata' id=rtdata.id %}">{{ rtdata.user }}</a></td>
-          {% else %}
-            <td>{{ rtdata.user }}</td>
-          {% endif %}
-        </tr>
-      {% endfor %}
+        {% for object in object_list %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td><a href="{{ object.get_absolute_url }}">{{ object.region }}</a></td>
+            <td>{{  object.user }}</td>
+            {% if  object.user.id == user.id %}
+              <td><a href="{% url 'analytics:edit_rtdata' object.id %}">編集</a></td>
+              <td><a href="{% url 'analytics:delete_rtdata' object.id %}">削除</a></td>
+            {% else %}
+              <td>{{  object.user }}</td>
+            {% comment %} <td>
+                {% for picture in object.pictures_set.all %}
+                    <img width="20px" height="20px" src={{ picture.picture.url }}>
+                {% endfor %}
+            </td> {% endcomment %}
+            {% endif %}
+          </tr>
+        {% endfor %}
       </tbody>
-  </table>
+    </table>
   </div>
 </div>
 

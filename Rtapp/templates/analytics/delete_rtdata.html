@@ -5,7 +5,9 @@
   <div class="row justify-content-center">
     <form method="POST">
     {% csrf_token %}
-    {{ delete_rtdata_form.as_p }}
+    {% comment %} {{ delete_rtdata_form.as_p }} {% endcomment %}
+    <p>{{ object.region}}を削除してもよろしいですか</p>
+    {{ form.as_p }}
     <input type="submit" value="削除">
     </form>
   </div>

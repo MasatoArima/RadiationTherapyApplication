@@ -8,8 +8,13 @@ from django.core.cache import cache
 from django.http import JsonResponse
 from django.core.files.storage import FileSystemStorage
 import os
-import logging
+from datetime import datetime
+from django.views.generic.list import ListView
+from django.views.generic.edit import (CreateView, UpdateView, DeleteView, FormView,)
+from django.urls import reverse_lazy
+from django.contrib.messages.views import SuccessMessageMixin
 
+import logging
 application_logger = logging.getLogger('application-logger')
 
 # from turtle import update
@@ -22,46 +27,121 @@ application_logger = logging.getLogger('application-logger')
 
 
 # Create your views here.
+class RtdataListView(ListView):
+    model = Rtdatas
+    template_name = 'analytics/list_rtdatas.html'
 
-def create_rtdata(request):
-    create_rtdata_form = forms.CreateRtdataForm(request.POST or None)
-    if create_rtdata_form.is_valid():
-        create_rtdata_form.instance.user = request.user
-        create_rtdata_form.save()
-        messages.success(request, '照射データを作成しました。')
-        return redirect('analytics:list_rtdatas')
-    return render(
-        request, 'analytics/create_rtdata.html', context={'create_rtdata_form': create_rtdata_form,}
-    )
-
-def list_rtdatas(request):
-    rtdatas = Rtdatas.objects.fetch_all_rtdatas()
-    return render(request, 'analytics/list_rtdatas.html', context={'rtdatas': rtdatas})
-
-def edit_rtdata(request, id):
-    rtdata = get_object_or_404(Rtdatas, id=id)
-    if rtdata.user.id != request.user.id:
-        raise Http404
-    edit_rtdata_form = forms.CreateRtdataForm(request.POST or None, instance=rtdata)
-    if edit_rtdata_form.is_valid():
-        edit_rtdata_form.save()
-        messages.success(request, 'RTデータを更新しました')
-        return redirect('analytics:list_rtdatas')
-    return render(
-        request, 'analytics/edit_rtdata.html', context={'edit_rtdata_form': edit_rtdata_form, 'id': id,}
-    )
+    def get_queryset(self):
+        qs = super(RtdataListView, self).get_queryset()
+        if 'region' in self.kwargs:
+            qs = qs.filter(name__startswith=self.kwargs['name'])
+        qs = qs.order_by('region')
+        return qs
 
 
-def delete_rtdata(request, id):
-    rtdata = get_object_or_404(Rtdatas, id=id)
-    if rtdata.user.id != request.user.id:
-        raise Http404
-    delete_rtdata_form = forms.DeleteRtdataForm(request.POST or None)
-    if delete_rtdata_form.is_valid(): # csrf check
-        rtdata.delete()
-        messages.success(request, 'RTデータを削除しました')
-        return redirect('analytics:list_rtdatas')
-    return render(request, 'analytics/delete_rtdata.html', context={'delete_rtdata_form': delete_rtdata_form})
+class RtdataCreateView(CreateView):
+    model = Rtdatas
+    fields = ['region']
+    template_name = 'analytics/create_rtdata.html'
+    success_url = reverse_lazy('analytics:list_rtdatas')
+
+    def form_valid(self, form):
+        form.instance.create_at = datetime.now()
+        form.instance.update_at = datetime.now()
+        form.instance.user = self.request.user
+        return super(RtdataCreateView, self).form_valid(form)
+
+    #デフォルト値を設定
+    # def get_initial(self, **kwargs):
+    #     initial = super(RtdataCreateView, self).get_initial(**kwargs)
+    #     initial['region'] = 'sample'
+    #     return initial
+
+class RtdataUpdateView(UpdateView):
+    model = Rtdatas
+    template_name = 'analytics/update_rtdata.html'
+    form_class = forms.UpdateRtdataForm
+    success_message = '更新に成功しました'
+
+    def get_success_url(self):
+        # return reverse_lazy('analytics:edit_rtdata', kwargs={'pk': self.object.id})
+        return reverse_lazy('analytics:list_rtdatas')
+
+    # def get_success_message(self, cleaned_data):
+    #     print(cleaned_data)
+    #     return cleaned_data.get('name') + 'を更新しました'
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     picture_form = forms.PictureUploadForm()
+    #     pictures = Pictures.objects.filter_by_book(book=self.object)
+    #     context['pictures'] = pictures
+    #     context['picture_form'] = picture_form
+    #     return context
+
+    # def post(self, request, *args, **kwargs):
+    #     # 画像をアップロードする処理を書く
+    #     picture_form = forms.PictureUploadForm(request.POST or None, request.FILES or None)
+    #     if picture_form.is_valid() and request.FILES:
+    #         book = self.get_object() # 更新中のBookがどのBookなのか取得
+    #         picture_form.save(book=book)
+    #     return super(BookUpdateView, self).post(request, *args, **kwargs)
+
+class RtdataDeleteView(DeleteView):
+    model = Rtdatas
+    template_name = 'analytics/delete_rtdata.html'
+    success_url = reverse_lazy('analytics:list_rtdatas')
+
+
+
+
+
+
+
+
+
+
+# def create_rtdata(request):
+#     create_rtdata_form = forms.CreateRtdataForm(request.POST or None)
+#     if create_rtdata_form.is_valid():
+#         create_rtdata_form.instance.user = request.user
+#         create_rtdata_form.save()
+#         messages.success(request, '照射データを作成しました。')
+#         return redirect('analytics:list_rtdatas')
+#     return render(
+#         request, 'analytics/create_rtdata.html', context={'create_rtdata_form': create_rtdata_form,}
+#     )
+
+# def list_rtdatas(request):
+#     rtdatas = Rtdatas.objects.fetch_all_rtdatas()
+#     return render(request, 'analytics/list_rtdatas.html', context={'rtdatas': rtdatas})
+
+# def edit_rtdata(request, id):
+#     rtdata = get_object_or_404(Rtdatas, id=id)
+#     if rtdata.user.id != request.user.id:
+#         raise Http404
+#     edit_rtdata_form = forms.CreateRtdataForm(request.POST or None, instance=rtdata)
+#     if edit_rtdata_form.is_valid():
+#         edit_rtdata_form.save()
+#         messages.success(request, 'RTデータを更新しました')
+#         return redirect('analytics:list_rtdatas')
+#     return render(
+#         request, 'analytics/edit_rtdata.html', context={'edit_rtdata_form': edit_rtdata_form, 'id': id,}
+#     )
+
+
+
+
+# def delete_rtdata(request, id):
+#     rtdata = get_object_or_404(Rtdatas, id=id)
+#     if rtdata.user.id != request.user.id:
+#         raise Http404
+#     delete_rtdata_form = forms.DeleteRtdataForm(request.POST or None)
+#     if delete_rtdata_form.is_valid(): # csrf check
+#         rtdata.delete()
+#         messages.success(request, 'RTデータを削除しました')
+#         return redirect('analytics:list_rtdatas')
+#     return render(request, 'analytics/delete_rtdata.html', context={'delete_rtdata_form': delete_rtdata_form})
 
 
 

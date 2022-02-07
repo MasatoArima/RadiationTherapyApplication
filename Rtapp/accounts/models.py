@@ -4,6 +4,8 @@ from django.contrib.auth.models import (
 )
 from django.urls import reverse_lazy
 
+# import logging
+
 
 class UserManager(BaseUserManager):
     def create_user(self, username, email, password=None):
@@ -31,6 +33,7 @@ class UserManager(BaseUserManager):
 
 class Users(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=150)
+    company = models.CharField(max_length=150)
     email = models.EmailField(max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)

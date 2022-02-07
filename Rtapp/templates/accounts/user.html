@@ -6,8 +6,25 @@
   {% endfor %}
 {% endif %}
 <div class="container">
-    <h1 class="text-center my-5">ユーザ画面です。ログインが必要な画面です</h1>
+    <h1 class="text-center my-5">    {{ object.username }} さんのページです</h1>
   <div class="row justify-content-center">
+    <p>
+    現在時刻は{{ time }}です<br>
+    メーアドレス:{{ object.email }}<br>
+    勤め先:{{ object.company }}<br>
+    </p>
+  </div>
+  <div class="row justify-content-center">
+    <h5>登録データ</h5>
+  </div>
+  <div class="row justify-content-center">
+  <table>
+    <ol>
+    {% for rtdata in rtdatas %}
+      <li>{{ rtdata.region}}</li>
+    {% endfor %}
+    </ol>
+  </table>
   </div>
 </div>
 {% endblock %}

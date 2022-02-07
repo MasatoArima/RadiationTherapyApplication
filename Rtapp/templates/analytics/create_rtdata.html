@@ -11,7 +11,8 @@
     <form method="POST">
     {% csrf_token %}
       <table>
-        {{ create_rtdata_form.as_table }}
+        {% comment %} {{ create_rtdata_form.as_table }} {% endcomment %}
+        {{ form.as_table }}
       </table>
       <input type="submit" value="RTデータ登録" class='mt-3'>
     </form>

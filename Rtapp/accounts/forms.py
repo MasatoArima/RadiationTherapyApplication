@@ -2,15 +2,17 @@ from django import forms
 from .models import Users
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.forms import ReadOnlyPasswordHashField
 
 class RegistForm(forms.ModelForm):
     username = forms.CharField(label='名前')
+    company = forms.CharField(label='会社')
     email = forms.EmailField(label='メールアドレス')
     password = forms.CharField(label='パスワード', widget=forms.PasswordInput())
 
     class Meta:
         model = Users
-        fields = ['username', 'email', 'password']
+        fields = ['username','company', 'email', 'password']
 
     def save(self, commit=False):
         user = super().save(commit=False)
@@ -23,6 +25,17 @@ class UserLoginForm(AuthenticationForm):
     username = forms.EmailField(label='メールアドレス') #ログイン時に入力するパラメータ
     password = forms.CharField(label='パスワード', widget=forms.PasswordInput())
     remember = forms.BooleanField(label='ログイン状態を保持する', required=False)
+
+class UserChangeForm(forms.ModelForm):
+    password = ReadOnlyPasswordHashField()
+
+    class Meta:
+        model = Users
+        fields = ('username', 'email', 'password', 'is_staff', 'is_active', 'is_superuser')
+
+    def clean_password(self):
+        # すでに登録されているパスワードを返す
+        return self.initial['password']
 
 # *************************************************************************************************************************************
 

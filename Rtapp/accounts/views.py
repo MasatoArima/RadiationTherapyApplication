@@ -1,9 +1,14 @@
+from urllib import request
 from django.shortcuts import render, redirect
 from django.views.generic.edit import CreateView
 from django.views.generic.base import TemplateView
+from django.views.generic.detail import DetailView
 from .forms import RegistForm, UserLoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
+from datetime import datetime
+from .models import Users
+from analytics.models import Rtdatas
 
 def top(request):
     return redirect('accounts:home')
@@ -28,11 +33,20 @@ class UserLoginView(LoginView):
 class UserLogoutView(LogoutView):
     pass
 
-class UserView(LoginRequiredMixin, TemplateView):
+class UserView(LoginRequiredMixin, DetailView):
+    model = Users
     template_name = 'accounts/user.html'
 
-    def dispatch(self, *args, **kwargs):
-        return super().dispatch(*args, **kwargs)
+    # def dispatch(self, *args, **kwargs):
+    #     return super().dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['time'] = datetime.now()
+        user = self.request.user
+        context['rtdatas'] = Rtdatas.objects.filter(user_id = user).order_by('region')
+        return context
+
 
 
 # ********************************************************************************************************************************

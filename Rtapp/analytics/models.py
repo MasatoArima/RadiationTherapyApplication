@@ -2,9 +2,8 @@ from django.db import models
 from django.utils import timezone
 import pytz
 
-import logging
-
-application_logger = logging.getLogger('application-logger')
+# import logging
+# application_logger = logging.getLogger('application-logger')
 
 
 class BaseModel(models.Model):
@@ -85,6 +84,8 @@ class Ctdatas(BaseModel):
 
     def __str__(self):
         return  self.name
+
+
 
 
 class MemoManager(models.Manager):

@@ -6,15 +6,18 @@
   {% endfor %}
 {% endif %}
 <div class="container">
-    <h1 class="text-center my-5">RTデータ編集画面</h1>
+    <h1 class="text-center my-5">RTデータ更新画面</h1>
   <div class="row justify-content-center">
     <form method="POST">
     {% csrf_token %}
       <table>
-        {% comment %} {{ edit_rtdata_form.as_table }} {% endcomment %}
+        {{ form.as_table }}
       </table>
-      <input type="submit" value="更新" class='mt-3 mb-5'>
+      <input type="submit" value="RTデータ更新" class='mt-3'>
     </form>
+  </div>
+  <div class="row justify-content-center">
+    <p><a class="navbar-brand" href="{% url 'analytics:delete_rtdata' pk=object.id %}">削除画面へ進む</a></p>
   </div>
 </div>
 {% endblock %}
