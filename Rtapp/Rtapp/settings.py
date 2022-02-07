@@ -49,6 +49,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'Rtapp.middleware.PerformanceMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -56,6 +57,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'Rtapp.middleware.MyMiddleware',
 ]
 
 ROOT_URLCONF = 'Rtapp.urls'
@@ -148,3 +150,71 @@ LOGIN_REDIRECT_URL = '/accounts/home/'
 LOGOUT_REDIRECT_URL = '/accounts/home/'
 
 SESSION_COOKIE_AGE = 21600 # (6時間)
+
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'simple': {
+            'format': '%(asctime)s %(levelname)s [%(pathname)s:%(lineno)s] %(message)s',
+        }
+    },
+    'handlers': {
+        'console_handler': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple',
+        },
+        'timed_file_handler': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join('logs', 'application.log'),
+            'when': 'S',
+            'interval': 10,
+            'backupCount': 10,
+            'formatter': 'simple',
+            'encoding': 'utf-8',
+            'delay': True,
+        },
+        'timed_error_handler': {
+            'level': 'ERROR',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join('logs', 'application_error.log'),
+            'when': 'S',
+            'interval': 10,
+            'backupCount': 10,
+            'formatter': 'simple',
+            'encoding': 'utf-8',
+            'delay': True,
+        },
+        'timed_performance_handler': {
+            'level': 'INFO',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': os.path.join('logs', 'application_performance.log'),
+            'when': 'S',
+            'interval': 10,
+            'backupCount': 10,
+            'formatter': 'simple',
+            'encoding': 'utf-8',
+            'delay': True,
+        }
+    },
+    'loggers': {
+        'application-logger': {
+            'handlers': ['console_handler', 'timed_file_handler'],
+            'level': 'DEBUG',
+            'propagate': False,
+        },
+        'error-logger': {
+            'handlers': ['timed_error_handler'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'performance-logger': {
+            'handlers': ['timed_performance_handler'],
+            'level': 'INFO',
+            'propagate': False,
+        }
+    }
+}

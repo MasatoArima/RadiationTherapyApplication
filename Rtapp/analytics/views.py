@@ -8,6 +8,9 @@ from django.core.cache import cache
 from django.http import JsonResponse
 from django.core.files.storage import FileSystemStorage
 import os
+import logging
+
+application_logger = logging.getLogger('application-logger')
 
 # from turtle import update
 # from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404

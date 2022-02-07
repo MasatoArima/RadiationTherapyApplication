@@ -1,7 +1,11 @@
 from django.db import models
-
 from django.utils import timezone
 import pytz
+
+import logging
+
+application_logger = logging.getLogger('application-logger')
+
 
 class BaseModel(models.Model):
     create_at = models.DateTimeField(default=timezone.datetime.now(pytz.timezone('Asia/Tokyo')))
