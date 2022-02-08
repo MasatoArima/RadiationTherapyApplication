@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from sqlalchemy import null
 from . import forms
 from django.contrib import messages
 from .models import Plandatas, Rtdatas, Plandatas, Stracturedatas, Ctdatas, Memo
@@ -86,17 +87,42 @@ class RtdataUpdateView(SuccessMessageMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         plandata_form = forms.PlandataUploadForm()
         plandata = Plandatas.objects.filter_by_rtdata(rtdata=self.object)
+        stracturedata_form = forms.StracturedataUploadForm()
+        stracturedata =  Stracturedatas.objects.filter_by_rtdata(rtdata=self.object)
+        ctdata_form = forms.CtdataUploadForm()
+        ctdata =  Ctdatas.objects.filter_by_rtdata(rtdata=self.object)
         rtdata = Rtdatas.objects.get(id=self.object.id)
-        context['plandata'] = plandata
         context['rtdata'] = rtdata
+        context['plandata'] = plandata
         context['plandata_form'] = plandata_form
+        context['stracturedata'] = stracturedata
+        context['stracturedata_form'] = stracturedata_form
+        context['ctdata'] = ctdata
+        context['ctdata_form'] = ctdata_form
         return context
 
     def post(self, request, *args, **kwargs):
         plandata_form = forms.PlandataUploadForm(request.POST or None, request.FILES or None)
-        if plandata_form.is_valid() and request.FILES:
+        if plandata_form['plandata'].data is None :
+            pass
+        elif plandata_form.is_valid() and request.FILES:
+                rtdata = self.get_object()
+                plandata_form.save(rtdata=rtdata)
+
+        stracturedata_form = forms.StracturedataUploadForm(request.POST or None, request.FILES or None)
+        if stracturedata_form['stracturedata'].data is None :
+            pass
+        elif stracturedata_form.is_valid() and request.FILES:
             rtdata = self.get_object()
-            plandata_form.save(rtdata=rtdata)
+            stracturedata_form.save(rtdata=rtdata)
+
+        ctdata_form = forms.CtdataUploadForm(request.POST or None, request.FILES or None)
+        if ctdata_form['ctdata'].data is None :
+            pass
+        elif ctdata_form.is_valid() and request.FILES:
+            rtdata = self.get_object()
+            ctdata_form.save(rtdata=rtdata)
+
         return super(RtdataUpdateView, self).post(request, *args, **kwargs)
 
 class RtdataDeleteView(SuccessMessageMixin, DeleteView):
@@ -142,9 +168,33 @@ def delete_plandata(request, pk):
     import os
     if os.path.isfile(plandata.plandata.path):
         os.remove(plandata.plandata.path)
-    messages.success(request, 'データを削除しました')
-    # return redirect('analytics:list_rtdatas')
+    messages.success(request, 'プランデータを削除しました')
     return redirect('analytics:edit_rtdata', pk=rtdata.id)
+
+def delete_stracturedata(request, pk):
+    stracturedata = get_object_or_404(Stracturedatas, rtdata_id=pk)
+    rtdata = get_object_or_404(Rtdatas, pk=pk)
+    stracturedata.delete()
+    import os
+    if os.path.isfile(stracturedata.stracturedata.path):
+        os.remove(stracturedata.stracturedata.path)
+    messages.success(request, 'ストラクチャデータを削除しました')
+    return redirect('analytics:edit_rtdata', pk=rtdata.id)
+
+def delete_ctdata(request, pk):
+    ctdata = get_object_or_404(Ctdatas, rtdata_id=pk)
+    rtdata = get_object_or_404(Rtdatas, pk=pk)
+    ctdata.delete()
+    import os
+    if os.path.isfile(ctdata.ctdata.path):
+        os.remove(ctdata.ctdata.path)
+    messages.success(request, 'CTデータを削除しました')
+    return redirect('analytics:edit_rtdata', pk=rtdata.id)
+
+
+
+
+
 
 
 

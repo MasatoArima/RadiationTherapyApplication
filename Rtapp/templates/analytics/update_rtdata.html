@@ -13,6 +13,8 @@
       <table>
         {{ form.as_table }}
         {{ plandata_form.as_p }}
+        {{ stracturedata_form.as_p }}
+        {{ ctdata_form.as_p }}
       </table>
       <input type="submit" value="RTデータ更新" class='mt-3'>
     </form>
@@ -22,9 +24,9 @@
       <table>
         <ul>
           <li>照射部位: {{object.region}}</li>
-          <li>plandata: <a href="{% url 'analytics:delete_plandata' pk=rtdata.id %}">{{object.plandatas.plandata }}</a></li>
-          {% comment %} <li>stracturedata: {{object.stracturedatas.stracturedata }}</li>
-          <li>ctdata: {{object.ctdatas.ctdata }}</li> {% endcomment %}
+          <li>plandata: <a href="{% url 'analytics:delete_plandata' pk=rtdata.id %}">{{ object.plandatas.plandata }}</a></li>
+          <li>stracturedata: <a href="{% url 'analytics:delete_stracturedata' pk=rtdata.id %}">{{ object.stracturedatas.stracturedata }}</a></li>
+          <li>ctdata: <a href="{% url 'analytics:delete_ctdata' pk=rtdata.id %}">{{ object.ctdatas.ctdata }}</a></li>
         </ul>
       </table>
   </div>

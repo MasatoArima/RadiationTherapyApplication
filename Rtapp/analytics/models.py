@@ -14,7 +14,6 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True #Tableとして作成されないようにする
 
-
 class RtdatasManager(models.Manager):
 
     def fetch_all_rtdatas(self):
@@ -38,13 +37,9 @@ class Rtdatas(BaseModel):
     def __str__(self):
         return  self.region
 
-
-
-
 class PlandatasManager(models.Manager):
     def filter_by_rtdata(self, rtdata):
         return self.filter(rtdata=rtdata).all()
-
 
 class Plandatas(BaseModel):
     plandata = models.FileField(upload_to='plandata/')
@@ -59,47 +54,40 @@ class Plandatas(BaseModel):
         db_table = 'plandatas'
         verbose_name_plural = 'プランデータ'
 
-    # def __str__(self):
-    #     return  self.objects
-
-
-
-
-
-
-
+class StracturedatasManager(models.Manager):
+    def filter_by_rtdata(self, rtdata):
+        return self.filter(rtdata=rtdata).all()
 
 class Stracturedatas(BaseModel):
+    stracturedata = models.FileField(upload_to='stracturedata/')
     rtdata = models.OneToOneField(
         Rtdatas,
         on_delete=models.CASCADE,
         primary_key=True
     )
-
+    objects = StracturedatasManager()
 
     class Meta:
         db_table = 'stracturedatas'
         verbose_name_plural = 'ストラクチャデータ'
 
-    def __str__(self):
-        return  self.name
-
-
+class CtdatasManager(models.Manager):
+    def filter_by_rtdata(self, rtdata):
+        return self.filter(rtdata=rtdata).all()
 
 class Ctdatas(BaseModel):
+    ctdata = models.FileField(upload_to='ctdata/')
     rtdata = models.OneToOneField(
         Rtdatas,
         on_delete=models.CASCADE,
         primary_key=True
     )
-
+    objects = CtdatasManager()
 
     class Meta:
         db_table = 'ctdatas'
         verbose_name_plural = 'CTデータ'
 
-    def __str__(self):
-        return  self.name
 
 
 

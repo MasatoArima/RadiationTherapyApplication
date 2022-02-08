@@ -62,3 +62,33 @@ class PlandataUploadForm(forms.ModelForm):
         obj.rtdata = kwargs['rtdata']
         obj.save()
         return obj
+
+class StracturedataUploadForm(forms.ModelForm):
+    stracturedata = forms.FileField(required=False)
+
+    class Meta:
+        model = Stracturedatas
+        fields = ['stracturedata',]
+
+    def save(self, *args, **kwargs):
+        obj = super(StracturedataUploadForm, self).save(commit=False)
+        obj.create_at = datetime.now()
+        obj.update_at = datetime.now()
+        obj.rtdata = kwargs['rtdata']
+        obj.save()
+        return obj
+
+class CtdataUploadForm(forms.ModelForm):
+    ctdata = forms.FileField(required=False)
+
+    class Meta:
+        model = Ctdatas
+        fields = ['ctdata',]
+
+    def save(self, *args, **kwargs):
+        obj = super(CtdataUploadForm, self).save(commit=False)
+        obj.create_at = datetime.now()
+        obj.update_at = datetime.now()
+        obj.rtdata = kwargs['rtdata']
+        obj.save()
+        return obj
