@@ -46,3 +46,19 @@ class PostMemoForm(forms.ModelForm):
     class Meta:
         model = Memo
         fields = ('memo',)
+
+
+class PlandataUploadForm(forms.ModelForm):
+    plandata = forms.FileField(required=False)
+
+    class Meta:
+        model = Plandatas
+        fields = ['plandata',]
+
+    def save(self, *args, **kwargs):
+        obj = super(PlandataUploadForm, self).save(commit=False)
+        obj.create_at = datetime.now()
+        obj.update_at = datetime.now()
+        obj.rtdata = kwargs['rtdata']
+        obj.save()
+        return obj

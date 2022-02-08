@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from . import forms
 from django.contrib import messages
-from .models import Rtdatas, Plandatas, Stracturedatas, Ctdatas, Memo
+from .models import Plandatas, Rtdatas, Plandatas, Stracturedatas, Ctdatas, Memo
 from accounts.models import Users
 from django.http import Http404
 from django.core.cache import cache
@@ -77,26 +77,27 @@ class RtdataUpdateView(SuccessMessageMixin, UpdateView):
 
     def get_success_url(self):
         # return reverse_lazy('analytics:edit_rtdata', kwargs={'pk': self.object.id})
-        return reverse_lazy('analytics:list_rtdatas')
+        return reverse_lazy('analytics:edit_rtdata', kwargs={'pk': self.object.id})
 
     def get_success_message(self, cleaned_data):
         return cleaned_data.get('region') + 'に更新しました'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     picture_form = forms.PictureUploadForm()
-    #     pictures = Pictures.objects.filter_by_book(book=self.object)
-    #     context['pictures'] = pictures
-    #     context['picture_form'] = picture_form
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        plandata_form = forms.PlandataUploadForm()
+        plandata = Plandatas.objects.filter_by_rtdata(rtdata=self.object)
+        rtdata = Rtdatas.objects.get(id=self.object.id)
+        context['plandata'] = plandata
+        context['rtdata'] = rtdata
+        context['plandata_form'] = plandata_form
+        return context
 
-    # def post(self, request, *args, **kwargs):
-    #     # 画像をアップロードする処理を書く
-    #     picture_form = forms.PictureUploadForm(request.POST or None, request.FILES or None)
-    #     if picture_form.is_valid() and request.FILES:
-    #         book = self.get_object() # 更新中のBookがどのBookなのか取得
-    #         picture_form.save(book=book)
-    #     return super(BookUpdateView, self).post(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        plandata_form = forms.PlandataUploadForm(request.POST or None, request.FILES or None)
+        if plandata_form.is_valid() and request.FILES:
+            rtdata = self.get_object()
+            plandata_form.save(rtdata=rtdata)
+        return super(RtdataUpdateView, self).post(request, *args, **kwargs)
 
 class RtdataDeleteView(SuccessMessageMixin, DeleteView):
     model = Rtdatas
@@ -131,23 +132,19 @@ class ToridogRedirectView(RedirectView):
     #         book = Books.objects.first()
     #         if 'pk' in kwargs:
     #             return reverse_lazy('store:detail_book', kwargs={'pk': kwargs['pk']})
-            
+
     #         return reverse_lazy('store:edit_book', kwargs={'pk': book.pk})
 
-
-    # def delete_picture(request, pk):
-    #     picture = get_object_or_404(Pictures, pk=pk)
-    #     picture.delete()
-    #     # import os
-    #     # if os.path.isfile(picture.picture.path):
-    #     #     os.remove(picture.picture.path)
-    #     messages.success(request, '画像を削除しました')
-    #     return redirect('store:edit_book', pk=picture.book.id)
-
-
-
-
-
+def delete_plandata(request, pk):
+    plandata = get_object_or_404(Plandatas, rtdata_id=pk)
+    rtdata = get_object_or_404(Rtdatas, pk=pk)
+    plandata.delete()
+    import os
+    if os.path.isfile(plandata.plandata.path):
+        os.remove(plandata.plandata.path)
+    messages.success(request, 'データを削除しました')
+    # return redirect('analytics:list_rtdatas')
+    return redirect('analytics:edit_rtdata', pk=rtdata.id)
 
 
 

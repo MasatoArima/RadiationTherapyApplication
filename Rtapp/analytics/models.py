@@ -38,21 +38,35 @@ class Rtdatas(BaseModel):
     def __str__(self):
         return  self.region
 
+
+
+
+class PlandatasManager(models.Manager):
+    def filter_by_rtdata(self, rtdata):
+        return self.filter(rtdata=rtdata).all()
+
+
 class Plandatas(BaseModel):
+    plandata = models.FileField(upload_to='plandata/')
     rtdata = models.OneToOneField(
         Rtdatas,
         on_delete=models.CASCADE,
         primary_key=True
     )
-
-    name = models.CharField(max_length=10)
+    objects = PlandatasManager()
 
     class Meta:
-        db_table = 'plandata'
+        db_table = 'plandatas'
         verbose_name_plural = 'プランデータ'
 
-    def __str__(self):
-        return  self.name
+    # def __str__(self):
+    #     return  self.objects
+
+
+
+
+
+
 
 
 class Stracturedatas(BaseModel):
@@ -62,7 +76,6 @@ class Stracturedatas(BaseModel):
         primary_key=True
     )
 
-    name = models.CharField(max_length=10)
 
     class Meta:
         db_table = 'stracturedatas'
@@ -80,7 +93,6 @@ class Ctdatas(BaseModel):
         primary_key=True
     )
 
-    name = models.CharField(max_length=10)
 
     class Meta:
         db_table = 'ctdatas'

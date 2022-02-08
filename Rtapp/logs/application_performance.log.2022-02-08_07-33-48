@@ -1,5 +1,0 @@
-2022-02-08 07:33:43,128 INFO [C:\Users\afoc0\Work\Programming\Github\RadiationTherapyApplication\Rtapp\Rtapp\middleware.py:27] /analytics/list_rtdatas/: 0.005912303924560547s
-2022-02-08 07:33:44,417 INFO [C:\Users\afoc0\Work\Programming\Github\RadiationTherapyApplication\Rtapp\Rtapp\middleware.py:27] /analytics/edit_rtdata/8: 0.004008769989013672s
-2022-02-08 07:33:45,373 INFO [C:\Users\afoc0\Work\Programming\Github\RadiationTherapyApplication\Rtapp\Rtapp\middleware.py:27] /analytics/list_rtdatas/: 0.0010945796966552734s
-2022-02-08 07:33:46,854 INFO [C:\Users\afoc0\Work\Programming\Github\RadiationTherapyApplication\Rtapp\Rtapp\middleware.py:27] /analytics/edit_rtdata/8: 0.004645347595214844s
-2022-02-08 07:33:48,123 INFO [C:\Users\afoc0\Work\Programming\Github\RadiationTherapyApplication\Rtapp\Rtapp\middleware.py:27] /analytics/list_rtdatas/: 0.0008769035339355469s
