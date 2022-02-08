@@ -33,11 +33,10 @@ application_logger = logging.getLogger('application-logger')
 class RtdataDetailView(DetailView):
     model = Rtdatas
     template_name = 'analytics/detail_rtdata.html'
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         print(context)
-        # context['form'] = forms.BookForm()
+        context['ctdata'] = Ctdatas.objects.filter(rtdata_id=context['object'].id)
         return context
 
 class RtdataListView(ListView):
@@ -119,6 +118,8 @@ class RtdataUpdateView(SuccessMessageMixin, UpdateView):
         ctdata_form = forms.CtdataUploadForm(request.POST or None, request.FILES or None)
         if ctdata_form['ctdata'].data is None :
             pass
+        elif Ctdatas.objects.filter(ctdata='ctdata/' + str(self.kwargs['pk']) + '/'+ str(ctdata_form['ctdata'].data)):
+            pass
         elif ctdata_form.is_valid() and request.FILES:
             rtdata = self.get_object()
             ctdata_form.save(rtdata=rtdata)
@@ -181,11 +182,10 @@ def delete_stracturedata(request, pk):
     messages.success(request, 'ストラクチャデータを削除しました')
     return redirect('analytics:edit_rtdata', pk=rtdata.id)
 
-def delete_ctdata(request, pk):
-    ctdata = get_object_or_404(Ctdatas, rtdata_id=pk)
-    rtdata = get_object_or_404(Rtdatas, pk=pk)
+def delete_ctdata(request, pk, rtdata):
+    ctdata = get_object_or_404(Ctdatas, pk=pk)
+    rtdata = get_object_or_404(Rtdatas, pk=rtdata)
     ctdata.delete()
-    import os
     if os.path.isfile(ctdata.ctdata.path):
         os.remove(ctdata.ctdata.path)
     messages.success(request, 'CTデータを削除しました')

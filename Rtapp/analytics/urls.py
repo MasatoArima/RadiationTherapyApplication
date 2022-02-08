@@ -24,6 +24,6 @@ urlpatterns = [
     path('toridog_redirect_view/', ToridogRedirectView.as_view(), name='toridog_redirect_view'),
     path('delete_plandata/<int:pk>', delete_plandata, name='delete_plandata'),
     path('delete_stracturedata/<int:pk>', delete_stracturedata, name='delete_stracturedata'),
-    path('delete_ctdata/<int:pk>', delete_ctdata, name='delete_ctdata'),
+    path('delete_ctdata/<int:pk><int:rtdata>', delete_ctdata, name='delete_ctdata'),
 ]
 

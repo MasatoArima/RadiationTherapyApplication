@@ -13,8 +13,8 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>タイトル</th>
-          <th>作成者</th>
+          <th>照射部位</th>
+          <th>データ挿入者</th>
           <th></th>
           <th></th>
         </tr>
@@ -29,7 +29,9 @@
               <td><a href="{% url 'analytics:edit_rtdata' object.id %}">編集</a></td>
               <td><a href="{% url 'analytics:delete_rtdata' object.id %}">削除</a></td>
             {% else %}
-              <td>{{  object.user }}</td>
+              <td></td>
+              <td></td>
+
             {% comment %} <td>
                 {% for picture in object.pictures_set.all %}
                     <img width="20px" height="20px" src={{ picture.picture.url }}>

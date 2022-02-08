@@ -76,12 +76,18 @@ class CtdatasManager(models.Manager):
         return self.filter(rtdata=rtdata).all()
 
 class Ctdatas(BaseModel):
-    ctdata = models.FileField(upload_to='ctdata/')
-    rtdata = models.OneToOneField(
-        Rtdatas,
-        on_delete=models.CASCADE,
-        primary_key=True
+
+    rtdata  = models.ForeignKey(
+        'Rtdatas', on_delete=models.CASCADE
     )
+
+    def file_upload_path(instance, filename):
+        ext = filename
+        new_name = instance.rtdata.id
+        return f'ctdata/{new_name}/{ext}'
+
+    ctdata = models.FileField(upload_to=file_upload_path)
+
     objects = CtdatasManager()
 
     class Meta:
