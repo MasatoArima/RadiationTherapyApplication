@@ -17,9 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from accounts.views import top
-
-# from accounts.views import show_error_page, top, server_error_page
+from accounts.views import top, handler400, handler403, handler404, handler500
 
 urlpatterns = [
     path('', top ),
@@ -29,8 +27,11 @@ urlpatterns = [
 
 ]
 
-# handler404 = show_error_page
-# handler500 = server_error_page
+handler400 = handler400
+handler403 = handler403
+handler404 = handler404
+handler500 = handler500
+
 
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

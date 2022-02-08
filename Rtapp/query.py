@@ -92,3 +92,33 @@ for student in Students.objects.order_by('-school__name'):
 Students.objects.values('school__name').annotate(
     Count('id'), Max('id'), Min('id'), Avg('id'), 合計値=Sum('id')
 )
+
+
+
+#       HttpResponseのサブクラス
+#        class HttpResponseRedirect : 302
+#        class HttpResponsePermanentRedirect : 301
+#        class HttpResponseNotModified : 304
+#        class HttpResponseBadRequest : 400
+#        class HttpResponseNotFound : 404
+#        class HttpResponseForbidden : 403
+#        class HttpResponseNotAllowed : 405
+#        class HttpResponseGonee : 410
+#        class HttpResponseServerError : 500#
+
+
+#        Httprequestオブジェクトの情報
+#        request.method : HTTPメソッド
+#        request.headders : HTTPヘッダー
+#        request.content_type :'Content_type'ヘッダーの値
+#        request.GET : URLクエリパラメータ
+#        http.body : リクエストボディ
+#        http.POST : form-urlencoded形式のリクエストボディ (ex: QueryDict)
+#        http.FILES : multipart/form-data形式のリクエストボディ (ex: MultivalueDict)
+
+
+#        HTTPリクエストのメッセージボディの取得方法
+#        http.body : リクエストボディ
+#        http.readメソッド : file-likeオブジェクト
+#        http.POST : form-urlencoded形式のリクエストボディ (ex: QueryDict)
+#        http.FILES : multipart/form-data形式のリクエストボディ (ex: MultivalueDict)
