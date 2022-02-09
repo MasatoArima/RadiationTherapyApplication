@@ -8,16 +8,7 @@
 <div class="container">
     <h1 class="text-center my-5">解析メモ画面</h1>
   <div class="row">
-    <div class='col-6'>
-      {% for memo in memos %}
-        <div>
-          <div>タイトル: {{ memo.title }}</div>
-          <div>{{ memo.memo | linebreaks }}</div>
-        </div>
-        <div class="col"><hr></div>
-      {% endfor %}
-    </div>
-    <div class='col-6'>
+    <div class='col-4'>
       {% if user.is_authenticated %}
         <div>
           <form method="POST">
@@ -29,6 +20,16 @@
           </form>
         </div>
       {% endif %}
+    </div>
+    <div class='col-8'>
+      {% for memo in memos %}
+        <div>
+          <div><strong>○{{ memo.title }}</strong></div>
+          <div>{{ memo.memo | linebreaks }}</div>
+          <div><a href="{% url 'analytics:delete_memo' pk=memo.id %}" onclick="return confirm('データを削除します。よろしいですか？')">削除</a></div>
+        </div>
+        <div class="col"><hr></div>
+      {% endfor %}
     </div>
   </div>
 </div>

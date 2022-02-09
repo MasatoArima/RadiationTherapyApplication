@@ -104,7 +104,7 @@ class MemoManager(models.Manager):
     def fetch_by_user_id(self, user_id):
         return self.filter(user_id=user_id).order_by('id').all()
 
-class Memo(BaseModel):
+class Memo(models.Model):
 
     title = models.CharField(max_length=100, null=True)
     memo = models.CharField(max_length=1000)

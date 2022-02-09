@@ -7,6 +7,7 @@
 {% endif %}
 <div class="container">
   <h1 class="text-center my-5">RTデータ一覧画面</h1>
+  <h5 class="text-center my-5">データ数 : {{ object_list.count }}</h5>
   <div class="row justify-content-center">
     <div class="col-4">
       <p><a class="navbar-brand" href="{% url 'analytics:create_rtdata' %}">データの新規作成</a></p>

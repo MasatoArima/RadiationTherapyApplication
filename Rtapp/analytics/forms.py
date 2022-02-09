@@ -88,15 +88,6 @@ class DeleteRtdataForm(forms.ModelForm):
         fields = []
 
 
-class PostMemoForm(forms.ModelForm):
-    title = forms.CharField(label='タイトル', widget=forms.Textarea(attrs={'rows': 1, 'placeholder':'タイトル'}))
-    memo = forms.CharField(label='本文', widget=forms.Textarea(attrs={'placeholder':'本文'}))
-
-    class Meta:
-        model = Memo
-        fields = ('memo',)
-
-
 class PlandataUploadForm(forms.ModelForm):
     plandata = forms.FileField(required=False)
 
@@ -141,3 +132,11 @@ class CtdataUploadForm(forms.ModelForm):
         obj.rtdata = kwargs['rtdata']
         obj.save()
         return obj
+
+class PostMemoForm(forms.ModelForm):
+    title = forms.CharField(label='タイトル', widget=forms.Textarea(attrs={'rows': 1, 'placeholder':'タイトル'}))
+    memo = forms.CharField(label='本文', widget=forms.Textarea(attrs={'placeholder':'本文'}))
+
+    class Meta:
+        model = Memo
+        fields = ('title', 'memo',)

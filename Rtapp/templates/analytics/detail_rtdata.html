@@ -8,25 +8,59 @@
 <div class="container">
     <h1 class="text-center my-5">{{object.region}}の詳細画面</h1>
   <div class="row justify-content-center">
-      <table>
-        <ul>
-          <li>照射部位<br>
-            {{object.region}}
-          </li><hr>
-          <li>plandata<br>
-            {{object.plandatas.plandata }}
-          </li><hr>
-          <li>stracturedata<br>
-            {{object.stracturedatas.stracturedata }}
-          </li><hr>
-          <li>ctdata<br>
-            {% for data in object.ctdatas_set.all %}
-              {{ data.ctdata }}<br>
-            {% endfor %}
-          </li><hr>
-        </ul>
-      </table>
-    </form>
+    <table>
+      <ul>
+        <li>照射部位<br>
+          {{object.region}}
+        </li><hr>
+        <li>plandata<br>
+          {{object.plandatas.plandata }}
+        </li><hr>
+        <li>stracturedata<br>
+          {{object.stracturedatas.stracturedata }}
+        </li><hr>
+        <li>ctdata<br>
+          {% for data in object.ctdatas_set.all %}
+            {{ data.ctdata }}<br>
+          {% endfor %}
+        </li><hr>
+      </ul>
+    </table>
   </div>
 </div>
+
+<div class="container">
+  <div class="row">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>mu</th>
+          <th>beamnumber</th>
+          <th>weight</th>
+          <th>mu/cp</th>
+          <th>x1</th>
+          <th>x2</th>
+          <th>y1</th>
+          <th>y2</th>
+          <th>mlc</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>{% for data in mu %}<p>{{ data }}</p>{% endfor %}</td>
+          <td>{{ beamnumber}}</td>
+          <td>{% for data in weight %}<p>{{ data }}</p>{% endfor %}</td>
+          <td>{% for data in mu_cp %}<p>{{ data }}</p>{% endfor %}</td>
+          <td>{% for data in xjaw %}<p>{{ data | slice:1 }}</p>{% endfor %}</td>
+          <td>{% for data in xjaw %}<p>{{ data | slice:-1 }}</p>{% endfor %}</td>
+          <td>{% for data in yjaw %}<p>{{ data | slice:1 }}</p>{% endfor %}</td>
+          <td>{% for data in yjaw %}<p>{{ data | slice:-1 }}</p>{% endfor %}</td>
+          <td>{% for data in mlc %}<p>{{ data }}</p>{% endfor %}</td>
+        </tr>
+    </tbody>
+    </table>
+  </div>
+</div>
+
+
 {% endblock %}
