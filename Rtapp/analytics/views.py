@@ -41,44 +41,46 @@ class RtdataDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         rtdata_id = self.object.id
-        file = Plandatas.objects.get(rtdata_id=rtdata_id)
-        df = pydicom.read_file(file.plandata)
-        beam_number = df.FractionGroupSequence[0].NumberOfBeams
+        plandata = Plandatas.objects.filter(rtdata_id=rtdata_id)
+        if plandata.first() is not None:
+            file = Plandatas.objects.get(rtdata_id=rtdata_id) ####
+            df = pydicom.read_file(file.plandata)
+            if 'FractionGroupSequence' in df :
+                beam_number = df.FractionGroupSequence[0].NumberOfBeams
+                Jaw_ref = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75,
+                        80, 85, 90, 95, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+                Jaw_ref2 = [0, -5, -10, -15, -20, -25, -30, -35, -40, -45, -50, -55, -60, -65, -70, -
+                            75, -80, -85, -90, -95, -100, -110, -120, -130, -140, -150, -160, -170, -180, -190, -200]
 
-        Jaw_ref = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75,
-                80, 85, 90, 95, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
-        Jaw_ref2 = [0, -5, -10, -15, -20, -25, -30, -35, -40, -45, -50, -55, -60, -65, -70, -
-                    75, -80, -85, -90, -95, -100, -110, -120, -130, -140, -150, -160, -170, -180, -190, -200]
+                cp_list = []
+                for i in range(beam_number):
+                    cp = df.BeamSequence[i].NumberOfControlPoints
+                    cp_list.append(cp)
 
-        cp_list = []
-        for i in range(beam_number):
-            cp = df.BeamSequence[i].NumberOfControlPoints
-            cp_list.append(cp)
+                cp_sum = sum(cp_list)
 
-        cp_sum = sum(cp_list)
+                tmp_x  = xjaw_position(df, beam_number)
+                xjaw = beamnumber_split(tmp_x, beam_number, cp_list)
+                tmp_y = yjaw_position(df, beam_number)
+                yjaw = beamnumber_split(tmp_y, beam_number, cp_list)
+                tmp_mlc = MLC_position(df, beam_number)
+                mlc = beamnumber_split(tmp_mlc, beam_number, cp_list)
+                mu = MU_data(df, beam_number)
+                tmp_weight = Weight_data(df, beam_number)
+                weight = beamnumber_split(tmp_weight, beam_number, cp_list)
+                tmp_mu_cp = MU_cp(mu, weight,df, beam_number)
+                no_sub_mu_cp = beamnumber_split(tmp_mu_cp, beam_number, cp_list)
+                tmp_list = list_sub(no_sub_mu_cp, df, beam_number)
+                mu_cp = beamnumber_split(tmp_list, beam_number, cp_list)
 
-        tmp_x  = xjaw_position(df, beam_number)
-        xjaw = beamnumber_split(tmp_x, beam_number, cp_list)
-        tmp_y = yjaw_position(df, beam_number)
-        yjaw = beamnumber_split(tmp_y, beam_number, cp_list)
-        tmp_mlc = MLC_position(df, beam_number)
-        mlc = beamnumber_split(tmp_mlc, beam_number, cp_list)
-        mu = MU_data(df, beam_number)
-        tmp_weight = Weight_data(df, beam_number)
-        weight = beamnumber_split(tmp_weight, beam_number, cp_list)
-        tmp_mu_cp = MU_cp(mu, weight,df, beam_number)
-        no_sub_mu_cp = beamnumber_split(tmp_mu_cp, beam_number, cp_list)
-        tmp_list = list_sub(no_sub_mu_cp, df, beam_number)
-        mu_cp = beamnumber_split(tmp_list, beam_number, cp_list)
-
-        context['plandata'] = df
-        context['beamnumber'] = beam_number
-        context['xjaw'] = xjaw[0]
-        context['yjaw'] = yjaw[0]
-        context['mlc'] = mlc[0]
-        context['weight'] = weight[0]
-        context['mu_cp'] = mu_cp[0]
-        context['mu'] = mu
+                context['plandata'] = df
+                context['beamnumber'] = beam_number
+                context['xjaw'] = xjaw[0]
+                context['yjaw'] = yjaw[0]
+                context['mlc'] = mlc[0]
+                context['weight'] = weight[0]
+                context['mu_cp'] = mu_cp[0]
+                context['mu'] = mu
 
         return context
 
@@ -156,17 +158,17 @@ class RtdataCreateView(LoginRequiredMixin, CreateView):
             rtdata = Rtdatas.objects.order_by("id").last()
 
         plandata_form = forms.CreatePlandataForm(request.POST or None, request.FILES or None)
-        if plandata_form.is_valid(): # リクエストファイルを削除して入力させている。
+        if plandata_form.is_valid() and 'plandata' in request.FILES: # リクエストファイルを削除して入力させている。
             plandata_form.save(rtdata=rtdata, plandata=request.FILES['plandata'])
 
         stracturedata_form = forms.CreateStracturedataForm(request.POST or None, request.FILES or None)
-        if stracturedata_form.is_valid():
+        if stracturedata_form.is_valid() and 'stracturedata' in request.FILES :
             stracturedata_form.save(rtdata=rtdata, stracturedata=request.FILES['stracturedata'])
 
         ctdata_form = forms.CreateCtdataForm(request.POST or None, request.FILES or None)
         if Ctdatas.objects.filter(ctdata='ctdata/' + str(rtdata.pk) + '/'+ str(ctdata_form['ctdata'].data)):
             pass
-        elif ctdata_form.is_valid():
+        elif ctdata_form.is_valid() and 'ctdata' in request.FILES:
             ctdata_form.save(rtdata=rtdata, ctdata=request.FILES['ctdata'])
 
         return redirect('analytics:list_rtdatas')
