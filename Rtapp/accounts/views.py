@@ -22,6 +22,8 @@ class RegistUserView(CreateView):
     template_name = 'accounts/regist.html'
     form_class = RegistForm
 
+
+# ログイン後メッセージを表示させる
 class UserLoginView(LoginView):
     template_name = 'accounts/user_login.html'
     authentication_form = UserLoginForm
@@ -52,10 +54,10 @@ class UserView(LoginRequiredMixin, DetailView):
 def handler400(request, exception):
     return render(request, 'errors/400.html', {}, status=400)
 
-def handler403(request):
+def handler403(request, exception):
     return render(request, 'errors/403.html', {}, status=403)
 
-def handler404(request):
+def handler404(request, exception):
     context = {"request_path": quote(request.path)}
     return render(request, 'errors/404.html', context, status=404)
 

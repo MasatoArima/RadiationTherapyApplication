@@ -10,14 +10,20 @@
   <div class="row justify-content-center">
       <table>
         <ul>
-          <li>照射部位: {{object.region}}</li>
-          <li>plandata: {{object.plandatas.plandata }}</li>
-          <li>stracturedata: {{object.stracturedatas.stracturedata }}</li>
-          <li>ctdata:<br>
-            {% for data in ctdata %}
+          <li>照射部位<br>
+            {{object.region}}
+          </li><hr>
+          <li>plandata<br>
+            {{object.plandatas.plandata }}
+          </li><hr>
+          <li>stracturedata<br>
+            {{object.stracturedatas.stracturedata }}
+          </li><hr>
+          <li>ctdata<br>
+            {% for data in object.ctdatas_set.all %}
               {{ data.ctdata }}<br>
             {% endfor %}
-          </li>
+          </li><hr>
         </ul>
       </table>
     </form>

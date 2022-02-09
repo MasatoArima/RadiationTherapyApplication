@@ -16,12 +16,12 @@ from django.views.generic.edit import (CreateView, UpdateView, DeleteView, FormV
 from django.views.generic.base import RedirectView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 import logging
 application_logger = logging.getLogger('application-logger')
 
 # from turtle import update
-# from django.shortcuts import render, redirect, get_list_or_404, get_object_or_404
 # from django.forms import formset_factory,modelformset_factory
 # from fsspec import filesystem
 # from matplotlib.style import context
@@ -30,28 +30,53 @@ application_logger = logging.getLogger('application-logger')
 
 
 # Create your views here.
-class RtdataDetailView(DetailView):
+class RtdataDetailView(LoginRequiredMixin, DetailView):
     model = Rtdatas
     template_name = 'analytics/detail_rtdata.html'
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        print(context)
-        context['ctdata'] = Ctdatas.objects.filter(rtdata_id=context['object'].id)
         return context
 
-class RtdataListView(ListView):
+class RtdataListView(LoginRequiredMixin, ListView):
     model = Rtdatas
     template_name = 'analytics/list_rtdatas.html'
 
     def get_queryset(self):
-        qs = super(RtdataListView, self).get_queryset()
-        if 'region' in self.kwargs:
-            qs = qs.filter(name__startswith=self.kwargs['name'])
-        qs = qs.order_by('region')
-        return qs
+        query = super().get_queryset()
+        region = self.request.GET.get('region', None)
+        author = self.request.GET.get('author', None)
+        if region:
+            query = query.filter(
+                region=region
+            )
+        if author:
+            qs = Users.objects.filter(
+                username=author
+            )
+            query = query.filter(
+                user_id=qs[0].id
+            )
+        order_by_create_at = self.request.GET.get('order_by_create_at', 0)
+        if order_by_create_at == '1':
+            query = query.order_by('create_at')
+        elif order_by_create_at == '2':
+            query = query.order_by('-create_at')
+        return query
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['region'] = self.request.GET.get('region', '')
+        context['author'] = self.request.GET.get('author', '')
+        order_by_create_at = self.request.GET.get('order_by_create_at', 0)
+        if order_by_create_at == '1':
+            context['ascending'] = True
+        elif order_by_create_at == '2':
+            context['descending'] = True
+        return context
 
 
-class RtdataCreateView(CreateView):
+class RtdataCreateView(LoginRequiredMixin, CreateView):
     model = Rtdatas
     fields = ['region']
     template_name = 'analytics/create_rtdata.html'
@@ -132,7 +157,7 @@ class RtdataDeleteView(SuccessMessageMixin, DeleteView):
     success_url = reverse_lazy('analytics:list_rtdatas')
     success_message = 'データを削除しました'
 
-class RtdataFormView(FormView):
+class RtdataFormView(LoginRequiredMixin, FormView):
 
     template_name = 'analytics/form_rtdata.html'
     form_class = forms.CreateRtdataForm

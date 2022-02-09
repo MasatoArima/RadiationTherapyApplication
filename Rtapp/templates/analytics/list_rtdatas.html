@@ -6,42 +6,52 @@
   {% endfor %}
 {% endif %}
 <div class="container">
-    <h1 class="text-center my-5">RTデータ一覧画面</h1>
+  <h1 class="text-center my-5">RTデータ一覧画面</h1>
   <div class="row justify-content-center">
-    <p><a class="navbar-brand" href="{% url 'analytics:create_rtdata' %}">データの新規作成</a></p>
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>照射部位</th>
-          <th>データ挿入者</th>
-          <th></th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        {% for object in object_list %}
+    <div class="col-4">
+      <p><a class="navbar-brand" href="{% url 'analytics:create_rtdata' %}">データの新規作成</a></p>
+      <form method="get" action="{% url 'analytics:list_rtdatas'%}">
+        <p>検索</p>
+        <p>照射部位 : <input type="text" name="region" value="{{region}}"></p>
+        <p>作成者 : <input type="text" name="author" value="{{author}}"></p>
+        <p>作成日で並び替え:
+          昇順<input type="radio" name="order_by_create_at" value="1" {% if ascending %}checked{% endif %}>
+          降順<input type="radio" name="order_by_create_at" value="2" {% if descending %}checked{% endif %}>
+        </p>
+        <p><input type="submit" value="実行する"></p>
+      </form>
+    </div>
+    <div class="col-8">
+      <table class="table table-striped table-hover">
+        <thead>
           <tr>
-            <td>{{ forloop.counter }}</td>
-            <td><a href="{{ object.get_absolute_url }}">{{ object.region }}</a></td>
-            <td>{{  object.user }}</td>
-            {% if  object.user.id == user.id %}
-              <td><a href="{% url 'analytics:edit_rtdata' object.id %}">編集</a></td>
-              <td><a href="{% url 'analytics:delete_rtdata' object.id %}">削除</a></td>
-            {% else %}
-              <td></td>
-              <td></td>
-
-            {% comment %} <td>
-                {% for picture in object.pictures_set.all %}
-                    <img width="20px" height="20px" src={{ picture.picture.url }}>
-                {% endfor %}
-            </td> {% endcomment %}
-            {% endif %}
+            <th>#</th>
+            <th>照射部位</th>
+            <th>作成者</th>
+            <th>作成日</th>
+            <th></th>
+            <th></th>
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for object in object_list %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td><a href="{{ object.get_absolute_url }}">{{ object.region }}</a></td>
+              <td>{{  object.user }}</td>
+              <td>{{  object.create_at|date:"Y.m.j"}}</td>
+              {% if  object.user.id == user.id %}
+                <td><a href="{% url 'analytics:edit_rtdata' object.id %}">編集</a></td>
+                <td><a href="{% url 'analytics:delete_rtdata' object.id %}">削除</a></td>
+              {% else %}
+                <td></td>
+                <td></td>
+              {% endif %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
