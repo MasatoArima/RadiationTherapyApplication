@@ -4,9 +4,9 @@ from . import forms
 from django.contrib import messages
 from .models import Plandatas, Rtdatas, Plandatas, Stracturedatas, Ctdatas, Memo
 from accounts.models import Users
-from django.http import Http404
 from django.core.cache import cache
 from django.http import JsonResponse
+from django.http import Http404
 from django.core.files.storage import FileSystemStorage
 import os
 from datetime import datetime
@@ -17,6 +17,7 @@ from django.views.generic.base import RedirectView
 from django.urls import reverse_lazy
 from django.contrib.messages.views import SuccessMessageMixin
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import login_required
 
 import logging
 application_logger = logging.getLogger('application-logger')
@@ -26,7 +27,7 @@ application_logger = logging.getLogger('application-logger')
 # from fsspec import filesystem
 # from matplotlib.style import context
 # from psutil import users
-# from django.contrib.auth.decorators import login_required
+
 
 
 # Create your views here.
@@ -187,6 +188,7 @@ class ToridogRedirectView(RedirectView):
 
     #         return reverse_lazy('store:edit_book', kwargs={'pk': book.pk})
 
+@login_required
 def delete_plandata(request, pk):
     plandata = get_object_or_404(Plandatas, rtdata_id=pk)
     rtdata = get_object_or_404(Rtdatas, pk=pk)
@@ -197,6 +199,7 @@ def delete_plandata(request, pk):
     messages.success(request, 'プランデータを削除しました')
     return redirect('analytics:edit_rtdata', pk=rtdata.id)
 
+@login_required
 def delete_stracturedata(request, pk):
     stracturedata = get_object_or_404(Stracturedatas, rtdata_id=pk)
     rtdata = get_object_or_404(Rtdatas, pk=pk)
@@ -207,6 +210,7 @@ def delete_stracturedata(request, pk):
     messages.success(request, 'ストラクチャデータを削除しました')
     return redirect('analytics:edit_rtdata', pk=rtdata.id)
 
+@login_required
 def delete_ctdata(request, pk, rtdata):
     ctdata = get_object_or_404(Ctdatas, pk=pk)
     rtdata = get_object_or_404(Rtdatas, pk=rtdata)

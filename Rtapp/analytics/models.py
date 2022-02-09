@@ -8,8 +8,10 @@ import os
 
 
 class BaseModel(models.Model):
-    create_at = models.DateTimeField(default=timezone.datetime.now(pytz.timezone('Asia/Tokyo')))
-    update_at = models.DateTimeField(default=timezone.datetime.now(pytz.timezone('Asia/Tokyo')))
+    # create_at = models.DateTimeField(default=timezone.datetime.now(pytz.timezone('Asia/Tokyo')))
+    # update_at = models.DateTimeField(default=timezone.datetime.now(pytz.timezone('Asia/Tokyo')))
+    create_at = models.DateTimeField()
+    update_at = models.DateTimeField()
 
     class Meta:
         abstract = True #Tableとして作成されないようにする

@@ -18,12 +18,14 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from accounts.views import top, handler400, handler403, handler404, handler500
+from allauth.socialaccount.providers.google.urls import urlpatterns as google_url
 
 urlpatterns = [
     path('', top ),
     path('admin/', admin.site.urls),
     path('accounts/', include('accounts.urls')),
     path('analytics/', include('analytics.urls')),
+    path('oauth_accounts/', include(google_url)),
 
 ]
 
