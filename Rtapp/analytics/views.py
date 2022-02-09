@@ -1,3 +1,4 @@
+from urllib import response
 from django.shortcuts import render, redirect, get_object_or_404
 from sqlalchemy import null
 from . import forms
@@ -21,6 +22,8 @@ from django.contrib.auth.decorators import login_required
 
 import logging
 application_logger = logging.getLogger('application-logger')
+
+from .forms import(CreateRtdataForm ,CreateCtdataForm, CreatePlandataForm, CreateStracturedataForm)
 
 # from turtle import update
 # from django.forms import formset_factory,modelformset_factory
@@ -79,21 +82,66 @@ class RtdataListView(LoginRequiredMixin, ListView):
 
 class RtdataCreateView(LoginRequiredMixin, CreateView):
     model = Rtdatas
-    fields = ['region']
+    # fields = ['region']
+    form_class = forms.CreateRtdataForm
     template_name = 'analytics/create_rtdata.html'
     success_url = reverse_lazy('analytics:list_rtdatas')
 
-    def form_valid(self, form):
-        form.instance.create_at = datetime.now()
-        form.instance.update_at = datetime.now()
-        form.instance.user = self.request.user
-        return super(RtdataCreateView, self).form_valid(form)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        plandata_form = forms.CreatePlandataForm()
+        stracturedata_form = forms.CreateStracturedataForm()
+        ctdata_form = forms.CreateCtdataForm()
+        context['plandata_form'] = plandata_form
+        context['stracturedata_form'] = stracturedata_form
+        context['ctdata_form'] = ctdata_form
+
+        plandata = Plandatas.objects.filter_by_rtdata(rtdata=self.object)
+        stracturedata =  Stracturedatas.objects.filter_by_rtdata(rtdata=self.object)
+        ctdata =  Ctdatas.objects.filter_by_rtdata(rtdata=self.object)
+
+
+        context['plandata'] = plandata
+        context['stracturedata'] = stracturedata
+        context['ctdata'] = ctdata
+        return context
+
+
+    def post(self, request, *args, **kwargs):
+        print('-'*400)
+        print(request.FILES)
+        print('-'*400)
+        create_rtdata_form = forms.CreateRtdataForm(request.POST or None)
+        if create_rtdata_form.is_valid():
+            create_rtdata_form.instance.user = request.user
+            create_rtdata_form.instance.create_at = datetime.now()
+            create_rtdata_form.instance.update_at = datetime.now()
+            create_rtdata_form.save()
+            rtdata = Rtdatas.objects.order_by("id").last()
+
+        plandata_form = forms.CreatePlandataForm(request.POST or None, request.FILES or None)
+        if plandata_form.is_valid(): # リクエストファイルを削除して入力させている。
+            plandata_form.save(rtdata=rtdata, plandata=request.FILES['plandata'])
+
+        stracturedata_form = forms.CreateStracturedataForm(request.POST or None, request.FILES or None)
+        if stracturedata_form.is_valid():
+            stracturedata_form.save(rtdata=rtdata, stracturedata=request.FILES['stracturedata'])
+
+        ctdata_form = forms.CreateCtdataForm(request.POST or None, request.FILES or None)
+        if Ctdatas.objects.filter(ctdata='ctdata/' + str(rtdata.pk) + '/'+ str(ctdata_form['ctdata'].data)):
+            pass
+        elif ctdata_form.is_valid():
+            ctdata_form.save(rtdata=rtdata, ctdata=request.FILES['ctdata'])
+
+        return redirect('analytics:list_rtdatas')
 
     #デフォルト値を設定
     # def get_initial(self, **kwargs):
     #     initial = super(RtdataCreateView, self).get_initial(**kwargs)
     #     initial['region'] = 'sample'
     #     return initial
+
+
 
 class RtdataUpdateView(SuccessMessageMixin, UpdateView):
     model = Rtdatas
@@ -127,6 +175,9 @@ class RtdataUpdateView(SuccessMessageMixin, UpdateView):
         return context
 
     def post(self, request, *args, **kwargs):
+        print('-'*400)
+        print(request.FILES)
+        print('-'*400)
         plandata_form = forms.PlandataUploadForm(request.POST or None, request.FILES or None)
         if plandata_form['plandata'].data is None :
             pass

@@ -18,6 +18,55 @@ class CreateRtdataForm(forms.ModelForm):
         obj.save()
         return obj
 
+
+class CreatePlandataForm(forms.ModelForm):
+    plandata = forms.FileField(required=False)
+
+    class Meta:
+        model = Plandatas
+        fields = ['plandata',]
+
+    def save(self, *args, **kwargs):
+        obj = super(CreatePlandataForm, self).save(commit=False)
+        obj.create_at = datetime.now()
+        obj.update_at = datetime.now()
+        obj.rtdata = kwargs['rtdata']
+        obj.plandata = kwargs['plandata']
+        obj.save()
+        return obj
+
+class CreateStracturedataForm(forms.ModelForm):
+    stracturedata = forms.FileField(required=False)
+
+    class Meta:
+        model = Stracturedatas
+        fields = ['stracturedata',]
+
+    def save(self, *args, **kwargs):
+        obj = super(CreateStracturedataForm, self).save(commit=False)
+        obj.create_at = datetime.now()
+        obj.update_at = datetime.now()
+        obj.rtdata = kwargs['rtdata']
+        obj.stracturedata = kwargs['stracturedata']
+        obj.save()
+        return obj
+
+class CreateCtdataForm(forms.ModelForm):
+    ctdata = forms.FileField(required=False)
+
+    class Meta:
+        model = Ctdatas
+        fields = ['ctdata',]
+
+    def save(self, *args, **kwargs):
+        obj = super(CreateCtdataForm, self).save(commit=False)
+        obj.create_at = datetime.now()
+        obj.update_at = datetime.now()
+        obj.rtdata = kwargs['rtdata']
+        obj.ctdata = kwargs['ctdata']
+        obj.save()
+        return obj
+
 class UpdateRtdataForm(forms.ModelForm):
 
     class Meta:

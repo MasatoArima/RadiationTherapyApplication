@@ -14,8 +14,16 @@
       {% csrf_token %}
         <table>
           {{ form.as_table }}
-          {{ plandata_form.as_table }}
-          {{ stracturedata_form.as_table }}
+          {% if object.plandatas.plandata == "" %}
+            {{ plandata_form.as_table }}
+          {% else%}
+            <tr><th>Plandata:</th><td>選択済みです</td></tr>
+          {% endif %}
+          {% if object.stracturedatas.stracturedata == "" %}
+            {{ stracturedata_form.as_table }}
+          {% else%}
+            <tr><th>Stracturedata:</th><td>選択済みです</td></tr>
+          {% endif %}
           {{ ctdata_form.as_table }}
         </table>
         <input type="submit" value="RTデータ更新" class='mt-3'>
