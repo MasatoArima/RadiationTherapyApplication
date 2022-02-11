@@ -1,7 +1,10 @@
+-e __pycache__\\ndb.sqlite3\\n.DS_Store\\nlocal_settings.py 
+
 .env
 logs
 media
 output
 
-config/local_settings.py
 db.sqlite3
+__pycache__
+.DS_Store
