@@ -1,5 +1,6 @@
 from urllib import response
 from django.shortcuts import render, redirect, get_object_or_404
+from matplotlib.style import context
 from sqlalchemy import null
 from . import forms
 from django.contrib import messages
@@ -26,6 +27,7 @@ application_logger = logging.getLogger('application-logger')
 from .forms import(CreateRtdataForm ,CreateCtdataForm, CreatePlandataForm, CreateStracturedataForm)
 
 import pydicom
+from matplotlib.style import context
 
 # from turtle import update
 # from django.forms import formset_factory,modelformset_factory
@@ -272,6 +274,92 @@ class ToridogRedirectView(RedirectView):
     #             return reverse_lazy('store:detail_book', kwargs={'pk': kwargs['pk']})
 
     #         return reverse_lazy('store:edit_book', kwargs={'pk': book.pk})
+
+class Jtcs(LoginRequiredMixin, ListView):
+    model = Rtdatas
+    template_name = 'analytics/jtcs.html'
+
+    def get_queryset(self):
+        query = super().get_queryset()
+        region = self.request.GET.get('region', None)
+        author = self.request.GET.get('author', None)
+        if region:
+            query = query.filter(
+                region=region
+            )
+        if author:
+            qs = Users.objects.filter(
+                username=author
+            )
+            query = query.filter(
+                user_id=qs[0].id
+            )
+        order_by_create_at = self.request.GET.get('order_by_create_at', 0)
+        if order_by_create_at == '1':
+            query = query.order_by('create_at')
+        elif order_by_create_at == '2':
+            query = query.order_by('-create_at')
+        return query
+
+    def get_context_data(self,**kwargs):
+        context = super().get_context_data(**kwargs)
+        context['region'] = self.request.GET.get('region', '')
+        context['author'] = self.request.GET.get('author', '')
+        order_by_create_at = self.request.GET.get('order_by_create_at', 0)
+        if order_by_create_at == '1':
+            context['ascending'] = True
+        elif order_by_create_at == '2':
+            context['descending'] = True
+
+        jtcs_data = []
+        region = self.request.GET.get('region', None)
+        author = self.request.GET.get('author', None)
+        if region and author:
+            user_id = Users.objects.filter(username=author)
+            rtdatas = Rtdatas.objects.filter(region=region, user_id=user_id)
+        elif region:
+            rtdatas = Rtdatas.objects.filter(region=region)
+        elif author:
+            user_id = Users.objects.filter(username=author)
+            rtdatas = Rtdatas.objects.filter(user_id=user_id)
+        else:
+            rtdatas = Rtdatas.objects.fetch_all_rtdatas()
+        for rtdata in rtdatas:
+            rtdata_id = rtdata.id
+            plandata = Plandatas.objects.filter(rtdata_id=rtdata_id)
+            if plandata.first() is not None:
+                        file = Plandatas.objects.get(rtdata_id=rtdata_id)
+                        df = pydicom.read_file(file.plandata)
+                        if 'FractionGroupSequence' in df :
+                            beam_number = df.FractionGroupSequence[0].NumberOfBeams
+                            Jaw_ref = [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65, 70, 75,
+                                    80, 85, 90, 95, 100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200]
+                            Jaw_ref2 = [0, -5, -10, -15, -20, -25, -30, -35, -40, -45, -50, -55, -60, -65, -70, -
+                                        75, -80, -85, -90, -95, -100, -110, -120, -130, -140, -150, -160, -170, -180, -190, -200]
+
+                            cp_list = []
+                            for i in range(beam_number):
+                                cp = df.BeamSequence[i].NumberOfControlPoints
+                                cp_list.append(cp)
+
+                            cp_sum = sum(cp_list)
+
+                            tmp_x  = xjaw_position(df, beam_number)
+                            xjaw = beamnumber_split(tmp_x, beam_number, cp_list)
+                            tmp_sub = list_sub_JTCS(xjaw, df, beam_number)
+                            xjaw_sub = beamnumber_split_JTCS(tmp_sub, cp_list, beam_number)
+                            xjaw_arc_sum = ARC_sum(xjaw_sub)
+                            jtcs_arc = ARC_JTCS(xjaw_arc_sum, df, beam_number)
+                            if jtcs_arc == 'None':
+                                jtcs = 'None'
+                            else:
+                                jtcs = sum(jtcs_arc)/beam_number
+
+                            jtcs_data.append(jtcs)
+
+        context['jtcs'] = jtcs_data
+        return context
+
 
 @login_required
 def delete_plandata(request, pk):
@@ -547,7 +635,7 @@ def MU_cp(mu, weight,df, beam_number):
     return mu_cp
 
 
-def list_sub(sub_list,df, beam_number):
+def list_sub(sub_list, df, beam_number):
     sublist = []
     for bi in range(beam_number):
         for cj in range(int(df.BeamSequence[bi].NumberOfControlPoints)-1):
@@ -556,7 +644,7 @@ def list_sub(sub_list,df, beam_number):
     return sublist
 
 
-def list_sub_JTCS(sub_list,df, beam_number):
+def list_sub_JTCS(sub_list, df, beam_number):
     sublist_x1 = []
     sublist_x2 = []
     for bi in range(beam_number):
@@ -600,7 +688,9 @@ def ARC_sum(sum_data):
 
 def ARC_JTCS(arc_data,df, beam_number):
     Arc_data = []
-    for i in range(beam_number):
-        Arc_data.append((arc_data[i] + arc_data[i+2]) /
-                        (int(df.BeamSequence[i].NumberOfControlPoints)-1))
-    return Arc_data
+    if beam_number == 1:
+        return 'None'
+    else:
+        for i in range(beam_number):
+            Arc_data.append((arc_data[i] + arc_data[i+2]) / (int(df.BeamSequence[i].NumberOfControlPoints)-1))
+        return Arc_data

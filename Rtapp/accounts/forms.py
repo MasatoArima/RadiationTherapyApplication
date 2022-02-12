@@ -104,7 +104,7 @@ class UserChangeForm(forms.ModelForm):
 #     confirm_password = forms.CharField(label='パスワード再入力', widget=forms.PasswordInput())
 
 #     class Meta():
-#         model = User
+#         model = Users
 #         fields = ('password', )
 
 #     def clean(self):

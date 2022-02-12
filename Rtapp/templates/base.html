@@ -26,6 +26,7 @@
               <a class="dropdown-item" href="{% url 'analytics:post_memo' user_id=request.user.id %}">解析メモ<span class="sr-only">(current)</span></a>
               <a class="dropdown-item" href="{% url 'analytics:create_rtdata' %}">解析データ登録<span class="sr-only">(current)</span></a>
               <a class="dropdown-item" href="{% url 'analytics:list_rtdatas' %}">解析データ一覧<span class="sr-only">(current)</span></a>
+              <a class="dropdown-item" href="{% url 'analytics:jtcs' %}">JTCS<span class="sr-only">(current)</span></a>
             </div>
           </li>
           {% endif %}
