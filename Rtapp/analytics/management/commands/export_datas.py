@@ -25,11 +25,12 @@ class Command(BaseCommand):
             rtdatas = rtdatas.filter(user_id=user_id)
         file_path = os.path.join(BASE_DIR, 'output', 'rtdatas', f'rtdatas_{datetime.now().strftime("%Y%m%d%H%M%S")}_{user_id}')
         with open(file_path, mode='w', newline='\n', encoding='utf-8') as csvfile:
-            fieldnames = ['id', 'region']
+            fieldnames = ['id', 'region', 'test']
             writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
             writer.writeheader()
             for rtdata in rtdatas:
                 writer.writerow({
                     'id': rtdata.id,
                     'region': rtdata.region,
+                    'test': rtdata.plandatas.plandata
                 })
