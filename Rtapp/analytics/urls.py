@@ -2,7 +2,7 @@ from django.urls import path
 from . import views
 from .views import(
     RtdataCreateView, RtdataUpdateView, RtdataDeleteView, RtdataListView, RtdataDetailView, RtdataFormView, ToridogRedirectView,
-    delete_memo, delete_plandata, delete_stracturedata, delete_ctdata, delete_memo, Jtcs
+    delete_memo, delete_plandata, delete_stracturedata, delete_ctdata, delete_memo, Jtcs, Mcs
 )
 
 
@@ -28,5 +28,6 @@ urlpatterns = [
     path('delete_ctdata/<int:pk>/<int:rtdata>', delete_ctdata, name='delete_ctdata'),
     path('delete_memo/<int:pk>', delete_memo, name='delete_memo'),
     path('jtcs', Jtcs.as_view(), name='jtcs'),
+    path('mcs', Mcs.as_view(), name='mcs'),
 ]
 
