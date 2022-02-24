@@ -45,6 +45,8 @@
                 <td><a href="{% url 'analytics:edit_rtdata' object.id %}">編集</a></td>
                 <td><a href="{% url 'analytics:delete_rtdata' object.id %}">削除</a></td>
               {% else %}
+                <td><a href="{% url 'analytics:edit_rtdata' object.id %}">編集</a></td>
+                <td><a href="{% url 'analytics:delete_rtdata' object.id %}">削除</a></td>
                 <td></td>
                 <td></td>
               {% endif %}

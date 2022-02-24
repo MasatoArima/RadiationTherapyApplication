@@ -358,6 +358,8 @@ class Jtcs(LoginRequiredMixin, ListView):
                                 jtcs = sum(jtcs_arc)/beam_number
 
                             jtcs_data.append(jtcs)
+            else:
+                jtcs_data.append('算出エラー')
 
         context['jtcs'] = jtcs_data
         return context
@@ -908,6 +910,9 @@ class Mcs(LoginRequiredMixin, ListView):
                             MCS = sum(MCS_F)
 
                             mcs_data.append(MCS)
+
+            else:
+                mcs_data.append('算出エラー')
 
         context['mcs'] = mcs_data
         return context
