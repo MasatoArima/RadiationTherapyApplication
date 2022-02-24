@@ -8,7 +8,7 @@
 <div class="container">
   <h1 class="text-center my-5">MCS算出</h1>
   <h5 class="text-center my-5">データ数 : {{ object_list.count }}</h5>
-  {% comment %} <h5 class="text-center my-5">
+  <h5 class="text-center my-5">
     <form method="get" action="{% url 'analytics:jtcs'%}">
       <p>※算出リストを絞る場合は、フォームに検索内容を入力後、算出をクリックしてください</p>
       <p>照射部位 : <input type="text" name="region" value="{{region}}"></p>
@@ -44,11 +44,11 @@
         <thead>
           <tr>
             <th>#</th>
-            <th>JTCS</th>
+            <th>MCS</th>
           </tr>
         </thead>
         <tbody>
-          {% for object in jtcs %}
+          {% for object in mcs %}
             <tr>
               <td>{{ forloop.counter }}</td>
               <td>{{ object }}</td>
@@ -57,7 +57,7 @@
         </tbody>
       </table>
     </div>
-  </div> {% endcomment %}
+  </div>
 </div>
 
 {% endblock %}
