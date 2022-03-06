@@ -1,25 +1,63 @@
-{% extends "base.html" %} {% block content %} {% load static %} {% if messages
-%} {% for message in messages %}
-<div>{{ message.message }}</div>
-{% endfor %} {% endif %}
+{% extends "base.html" %}
+{% block content %}
+{% load static %}
+{% if messages%}
+  {% for message in messages %}
+    <div>{{ message.message }}</div>
+  {% endfor %}
+{% endif %}
+<style>
+  .red {
+    color: red;
+  }
+  .blue {
+    color: blue;
+  }
+</style>
 <div class="container">
   <h1 class="text-center my-5">DICOMfileを用いた治療精度解析アプリ</h1>
-  <h5 id="counter" class="text-right my-5">経過時間: [[ counter ]]</h5>
+  <div id="testdata" class="text-center my-5">
+    <template v-if="flag">
+      <p><strong>作成中です</strong></p>
+    </template>
+    <template v-else>
+      <p>作成中です</p>
+    </template>
+  <hello/>
+  </div>
+  <div id="counter">
+    <p class="text-right my-5" v-bind:class="classes">
+      サイト接続時間: [[ counter ]] [[ "現在時刻" +  " [" + new Date().toLocaleString() + "]" ]]
+    </p>
+  </div>
 
   <div class="row text-center">
     <div class="col">
-      <h3><strong>解析項目</strong></h3>
-      <p>
-        MCS<br />
-        JTCS<br />
-        線量誤差予測<br />
-        PLAN基本情報取得<br />
-      </p>
-      <p>
-        <strong>★DICOMファイル ★CTデータ ★ストラクチャセット</strong><br />
-        などを用いて解析を行います<br />
-      </p>
-      {% comment %}
+      <div id="app">
+        <h3 v-bind:style="{fontSize:'20pt', color:'orange',borderBottom:'0.5rem solid' }">
+          <strong>解析項目</strong>
+        </h3>
+        <template v-if="flag">
+          <p v-html="message"></p>
+        </template>
+        <template v-else>
+          <table class="table">
+            <thead class="thead-dark">
+              <tr><th>解析項目</th><th>解析データ</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>MCS</td><td>(DICOM & CT & St)データ</td></tr>
+              <tr><td>JTCS</td><td>DICOMファイル</td></tr>
+              <tr><td>線量誤差</td><td>DICOMファイル</td></tr>
+              <tr><td>plan基礎情報取得</td><td>DICOMファイル</td></tr>
+            </tbody>
+          </table>
+        </template>
+        <p v-bind:style="{borderTop:'0.5rem solid'}">
+          <strong>★DICOMファイル ★CTデータ ★ストラクチャセット</strong><br />
+          などを用いて解析を行います<br />
+        </p>
+      </div>
     </div>
     <div class="col">
       <img
@@ -28,24 +66,83 @@
         alt="..."
       />
     </div>
-    {% endcomment %}
 
     <script>
+      var classObj = {
+          red: true,
+          blue: false
+      }
       const Counter = {
         data() {
           return {
             counter: 0,
+            classes : classObj
           };
         },
         mounted() {
           setInterval(() => {
-            this.counter++;
+            this.counter++
+            this.classes.red = !classObj.red
+            this.classes.blue = !classObj.blue
           }, 1000);
         },
         delimiters: ["[[", "]]"],
       };
       Vue.createApp(Counter).mount("#counter");
+
+      const list = ['MCS', 'JTCS', '線量誤差予測', 'PLAN基本情報取得']
+      const appdata = {
+        data() {
+          return {
+            message:
+            `<ul style='list-style:none; padding:0px;'>
+              <li>${list[0]}</li>
+              <li>${list[1]}</li>
+              <li>${list[2]}</li>
+              <li>${list[3]}</li>
+            </ul>`,
+            flag : true
+          };
+        },
+        delimiters: ["[[", "]]"],
+        mounted() {
+          setInterval(()=>{
+            this.flag = !this.flag
+          }, 5000)
+        },
+      };
+
+      let app = Vue.createApp(appdata)
+      app.mount('#app')
+
+      const testdata = {
+        data() {
+          return {
+            flag : true
+          };
+        },
+        delimiters: ["[[", "]]"],
+        mounted() {
+          setInterval(()=>{
+            message : '※コンポーネントを表示する'
+            this.flag = !this.flag
+          }, 500)
+        },
+      };
+
+      let test = Vue.createApp(testdata)
+
+      test.component('hello', {
+        data() {
+          return {
+            message: "test"
+          }
+        },
+        template: '<p class="alert alert-primary">{{message}}</p>'
+      })
+      test.mount('#testdata')
     </script>
   </div>
 </div>
+
 {% endblock %}
