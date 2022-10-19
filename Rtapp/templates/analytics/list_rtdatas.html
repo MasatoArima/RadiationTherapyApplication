@@ -43,9 +43,9 @@
             <tr>
               <td>{{ forloop.counter }}</td>
               <td><a href="{{ object.get_absolute_url }}">{{ object.region }}</a></td>
-              <td>{{  object.user }}</td>
-              <td>{{  object.create_at|date:"Y.m.j"}}</td>
-              {% if  object.user.id == user.id %}
+              <td>{{ object.user }}</td>
+              <td>{{ object.create_at|date:"Y.m.j"}}</td>
+              {% if object.user.id == user.id %}
                 <td><a href="{% url 'analytics:edit_rtdata' object.id %}">編集</a></td>
                 <td><a href="{% url 'analytics:delete_rtdata' object.id %}">削除</a></td>
               {% else %}
